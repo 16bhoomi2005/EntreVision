@@ -1,0 +1,86 @@
+{
+  "Bhiwapur": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 0
+  },
+  "Hingna": {
+    "schools": 3,
+    "colleges": 1,
+    "hospitals": 10,
+    "transport": 10
+  },
+  "Kalmeshwar": {
+    "schools": 5,
+    "colleges": 4,
+    "hospitals": 6,
+    "transport": 3
+  },
+  "Kamptee": {
+    "schools": 12,
+    "colleges": 4,
+    "hospitals": 32,
+    "transport": 5
+  },
+  "Katol": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 0
+  },
+  "Kuhi": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 0
+  },
+  "Mauda": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 1
+  },
+  "Nagpur (Rural)": {
+    "schools": 3,
+    "colleges": 3,
+    "hospitals": 37,
+    "transport": 3
+  },
+  "Nagpur (Urban)": {
+    "schools": 28,
+    "colleges": 9,
+    "hospitals": 496,
+    "transport": 38
+  },
+  "Narkhed": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 0
+  },
+  "Parseoni": {
+    "schools": 2,
+    "colleges": 0,
+    "hospitals": 6,
+    "transport": 0
+  },
+  "Ramtek": {
+    "schools": 1,
+    "colleges": 0,
+    "hospitals": 0,
+    "transport": 0
+  },
+  "Savner": {
+    "schools": 2,
+    "colleges": 0,
+    "hospitals": 2,
+    "transport": 1
+  },
+  "Umred": {
+    "schools": 0,
+    "colleges": 0,
+    "hospitals": 10,
+    "transport": 2
+  }
+}

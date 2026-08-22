@@ -1,0 +1,102 @@
+[
+  {
+    "commodity": "Oranges (Grade A)",
+    "mandi": "Katol Mandi",
+    "min_price": 3800,
+    "max_price": 4600,
+    "model_price": 4200,
+    "unit": "₹/Quintal",
+    "trend": "up",
+    "last_updated": "Today, 10:30 AM"
+  },
+  {
+    "commodity": "Oranges (Grade B)",
+    "mandi": "Katol Mandi",
+    "min_price": 2800,
+    "max_price": 3400,
+    "model_price": 3100,
+    "unit": "₹/Quintal",
+    "trend": "stable",
+    "last_updated": "Today, 10:30 AM"
+  },
+  {
+    "commodity": "Soybean (Yellow)",
+    "mandi": "Saoner Mandi",
+    "min_price": 4400,
+    "max_price": 4950,
+    "model_price": 4700,
+    "unit": "₹/Quintal",
+    "trend": "up",
+    "last_updated": "Today, 11:15 AM"
+  },
+  {
+    "commodity": "Soybean (Yellow)",
+    "mandi": "Kalmeshwar Mandi",
+    "min_price": 4350,
+    "max_price": 4890,
+    "model_price": 4650,
+    "unit": "₹/Quintal",
+    "trend": "stable",
+    "last_updated": "Today, 11:15 AM"
+  },
+  {
+    "commodity": "Cotton (Long Staple)",
+    "mandi": "Nagpur API Mandi",
+    "min_price": 6800,
+    "max_price": 7650,
+    "model_price": 7200,
+    "unit": "₹/Quintal",
+    "trend": "down",
+    "last_updated": "Today, 09:45 AM"
+  },
+  {
+    "commodity": "Cotton (Medium Staple)",
+    "mandi": "Saoner Mandi",
+    "min_price": 6200,
+    "max_price": 6900,
+    "model_price": 6550,
+    "unit": "₹/Quintal",
+    "trend": "stable",
+    "last_updated": "Today, 11:15 AM"
+  },
+  {
+    "commodity": "Paddy (Common)",
+    "mandi": "Kuhi Mandi",
+    "min_price": 2180,
+    "max_price": 2400,
+    "model_price": 2300,
+    "unit": "₹/Quintal",
+    "trend": "up",
+    "last_updated": "Yesterday, 04:00 PM"
+  },
+  {
+    "commodity": "Wheat (Lokwan)",
+    "mandi": "Kamptee Mandi",
+    "min_price": 2450,
+    "max_price": 2800,
+    "model_price": 2650,
+    "unit": "₹/Quintal",
+    "trend": "stable",
+    "last_updated": "Today, 12:00 PM"
+  },
+  {
+    "commodity": "Cow Milk (Raw)",
+    "mandi": "Nagpur Rural Dairy Co-op",
+    "min_price": 32,
+    "max_price": 38,
+    "model_price": 35,
+    "unit": "₹/Liter",
+    "trend": "up",
+    "last_updated": "Today, 07:00 AM"
+  },
+  {
+    "commodity": "Buffalo Milk (Raw)",
+    "mandi": "Nagpur Rural Dairy Co-op",
+    "min_price": 52,
+    "max_price": 60,
+    "model_price": 56,
+    "unit": "₹/Liter",
+    "trend": "stable",
+    "last_updated": "Today, 07:00 AM"
+  }
+]

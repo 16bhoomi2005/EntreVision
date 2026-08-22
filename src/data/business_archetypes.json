@@ -1,0 +1,407 @@
+[
+  {
+    "id": "orange_pulp",
+    "name": "Orange Pulp & Fruit Pulping Unit",
+    "sector": "Agriculture & Livestock",
+    "capital": "medium",
+    "risk": "medium",
+    "space": "medium",
+    "raw_materials": ["Oranges", "Sugar", "Packaging Bottles"],
+    "description": "Establish a fruit pulping and concentration unit to process Nagpur's famous mandarin oranges into high-shelf-life pulp and squashes.",
+    "investment_range": "₹4.5 Lakhs - ₹6 Lakhs",
+    "monthly_profit_est": "₹60,000 - ₹95,000",
+    "break_even_months": 8,
+    "checklist": [
+      "Obtain FSSAI license for food processing",
+      "Lease a 1,000 sq.ft. space with clean water access",
+      "Purchase fruit washer, pulping machine, and sealing units",
+      "Source fresh oranges directly from growers in Narkhed/Katol tehsils",
+      "Apply for PMFME 35% capital subsidy scheme"
+    ],
+    "costs_breakdown": {
+      "rent": 15000,
+      "machinery": 320000,
+      "working_capital": 100000,
+      "licensing": 15000,
+      "marketing": 20000
+    }
+  },
+  {
+    "id": "fly_ash_bricks",
+    "name": "Fly Ash Brick Manufacturing",
+    "sector": "Manufacturing",
+    "capital": "high",
+    "risk": "low",
+    "space": "large",
+    "raw_materials": ["Fly Ash", "Cement", "Sand", "Water"],
+    "description": "Utilize fly ash residues from power stations in Nagpur (Koradi/Khaperkheda) to manufacture high-durability green construction bricks.",
+    "investment_range": "₹12 Lakhs - ₹15 Lakhs",
+    "monthly_profit_est": "₹1,50,000 - ₹2,30,000",
+    "break_even_months": 12,
+    "checklist": [
+      "Register enterprise as MSME and apply for Udyam",
+      "Acquire 1.5 Acre industrial land lease near thermal power plant corridors",
+      "Setup automated fly ash brick press and curing tanks",
+      "Secure supply contract for fly ash with power generation utility (MAHAGENCO)",
+      "Apply for Maharashtra MSME PSI Capital Subsidy"
+    ],
+    "costs_breakdown": {
+      "rent": 45000,
+      "machinery": 850000,
+      "working_capital": 250000,
+      "licensing": 25000,
+      "marketing": 30000
+    }
+  },
+  {
+    "id": "cotton_roll",
+    "name": "Surgical Cotton Roll Processing",
+    "sector": "Manufacturing",
+    "capital": "medium",
+    "risk": "medium",
+    "space": "medium",
+    "raw_materials": ["Raw Cotton", "Bleaching Agents", "Carding Spindles"],
+    "description": "Process local short-staple cotton crops grown in Hingna, Saoner, and Kalmeshwar tehsils into sterile surgical cotton rolls for hospitals.",
+    "investment_range": "₹6 Lakhs - ₹8 Lakhs",
+    "monthly_profit_est": "₹80,000 - ₹1,20,000",
+    "break_even_months": 10,
+    "checklist": [
+      "Secure Drug license for surgical dressings production",
+      "Lease 1,200 sq.ft. dry manufacturing workspace",
+      "Install carding machines, cotton kier, and sterilizers",
+      "Tie up with clinics and hospital distributors in Nagpur town",
+      "Apply for Mudra Loan (Tarun category) for working capital support"
+    ],
+    "costs_breakdown": {
+      "rent": 20000,
+      "machinery": 480000,
+      "working_capital": 150000,
+      "licensing": 20000,
+      "marketing": 15000
+    }
+  },
+  {
+    "id": "cold_pressed_oil",
+    "name": "Cold-Pressed Soybean Oil Mill",
+    "sector": "Agriculture & Livestock",
+    "capital": "medium",
+    "risk": "low",
+    "space": "medium",
+    "raw_materials": ["Soybean seeds", "Filtration cloth", "Oil bottles"],
+    "description": "Establish a chemical-free cold-pressed oil extraction unit to process Nagpur soybean crops into premium culinary oil and high-protein oil cakes.",
+    "investment_range": "₹3.5 Lakhs - ₹5 Lakhs",
+    "monthly_profit_est": "₹50,000 - ₹85,000",
+    "break_even_months": 7,
+    "checklist": [
+      "Acquire FSSAI and local trade licenses",
+      "Acquire a commercial shop space of 500 sq.ft.",
+      "Install wooden-cold-press (Lakdi Ghana) oil extractor",
+      "Procure raw soybean seeds directly from local farmer groups",
+      "Market oil cake to local dairy farms as high-grade cattle feed"
+    ],
+    "costs_breakdown": {
+      "rent": 12000,
+      "machinery": 240000,
+      "working_capital": 80000,
+      "licensing": 10000,
+      "marketing": 10000
+    }
+  },
+  {
+    "id": "spices_grinding",
+    "name": "Chilli & Spices Grinding Mill",
+    "sector": "Food & Hospitality",
+    "capital": "low",
+    "risk": "low",
+    "space": "small",
+    "raw_materials": ["Dry Red Chilli", "Turmeric", "Coriander Seeds"],
+    "description": "Leverage Nagpur's proximity to Umred and Bhiwapur's famous hot red chilli markets to grind and package premium local spices.",
+    "investment_range": "₹1.2 Lakhs - ₹2 Lakhs",
+    "monthly_profit_est": "₹25,000 - ₹45,000",
+    "break_even_months": 5,
+    "checklist": [
+      "Register micro-enterprise on Udyam portal",
+      "Purchase spice pulverizer, grinding machine, and heat sealer",
+      "Source Bhiwapur red chillies directly from local APMC mandis",
+      "Pack in 100g, 250g, and 500g bags with custom labeling",
+      "Apply for Mudra Shishu/Kishor loan for financing"
+    ],
+    "costs_breakdown": {
+      "rent": 6000,
+      "machinery": 85000,
+      "working_capital": 35000,
+      "licensing": 5000,
+      "marketing": 8000
+    }
+  },
+  {
+    "id": "dairy_farm",
+    "name": "Modern Dairy & Milk Chilling Unit",
+    "sector": "Agriculture & Livestock",
+    "capital": "high",
+    "risk": "low",
+    "space": "large",
+    "raw_materials": ["Milking Cows/Buffaloes", "Cattle Feed", "Chilling Cans"],
+    "description": "Establish a dairy farm with 10-15 high-yield crossbred cows or buffaloes, integrated with a chilling tank to supply fresh milk.",
+    "investment_range": "₹10 Lakhs - ₹13 Lakhs",
+    "monthly_profit_est": "₹1,20,000 - ₹1,80,000",
+    "break_even_months": 11,
+    "checklist": [
+      "Acquire veterinary certificates and animal purchase permits",
+      "Lease 1 Acre land with cattle shed, water borewell, and fodder field",
+      "Install bulk milk chilling tank (500L capacity) and milking machines",
+      "Tie up with dairy co-operatives (e.g. Mahanand / Amul) for bulk sales",
+      "Apply for NABARD Dairy Entrepreneurship Development Scheme (DEDS)"
+    ],
+    "costs_breakdown": {
+      "rent": 25000,
+      "machinery": 750000,
+      "working_capital": 200000,
+      "licensing": 15000,
+      "marketing": 10000
+    }
+  },
+  {
+    "id": "e_seva_kendra",
+    "name": "Rural CSC & Digital Services Center",
+    "sector": "IT & Services",
+    "capital": "low",
+    "risk": "low",
+    "space": "small",
+    "raw_materials": ["Computers", "Printer/Scanner", "High-speed Internet"],
+    "description": "Set up a Common Service Center (CSC) to offer digital documentation (MahaOnline, PAN, Aadhaar link, prints) and financial kiosk services in rural tehsils.",
+    "investment_range": "₹80,000 - ₹1.5 Lakhs",
+    "monthly_profit_est": "₹18,000 - ₹32,000",
+    "break_even_months": 6,
+    "checklist": [
+      "Apply for CSC VLE registration online",
+      "Lease a small road-facing shop (150 sq.ft.) near tehsil office/bus stop",
+      "Procure a PC, biometric scanner, laser printer, and UPS battery backup",
+      "Install digital banners detailing services and government rates",
+      "Link bank account for financial remittance transactions"
+    ],
+    "costs_breakdown": {
+      "rent": 4000,
+      "machinery": 75000,
+      "working_capital": 15000,
+      "licensing": 2000,
+      "marketing": 4000
+    }
+  },
+  {
+    "id": "soil_testing_lab",
+    "name": "Soil & Water Testing Consultancy",
+    "sector": "IT & Services",
+    "capital": "medium",
+    "risk": "medium",
+    "space": "small",
+    "raw_materials": ["Chemical Reagents", "Soil Analyzer kit", "Test tubes"],
+    "description": "Establish a soil testing laboratory providing crop-specific nutrient consultancy to rural orange and cotton farmers in Nagpur.",
+    "investment_range": "₹3 Lakhs - ₹4 Lakhs",
+    "monthly_profit_est": "₹35,000 - ₹65,000",
+    "break_even_months": 8,
+    "checklist": [
+      "Secure accreditation from Directorate of Agriculture",
+      "Lease 300 sq.ft. space with proper chemical drainage ventilation",
+      "Purchase spectrophotometers, soil pH meters, and nitrogen analyzers",
+      "Market testing services at rural weekly markets (Athavadi Bazar)",
+      "Offer package deals (Soil Test + Fertilizer prescription chart)"
+    ],
+    "costs_breakdown": {
+      "rent": 8000,
+      "machinery": 220000,
+      "working_capital": 50000,
+      "licensing": 12000,
+      "marketing": 10000
+    }
+  },
+  {
+    "id": "tractor_repair",
+    "name": "Tractor & Agriculture Equipment Workshop",
+    "sector": "IT & Services",
+    "capital": "medium",
+    "risk": "low",
+    "space": "medium",
+    "raw_materials": ["Engine Oils", "Spare Parts", "Hydraulic Jacks"],
+    "description": "Establish a commercial tractor repairing and farming machinery service garage in highly cultivated crop tracts like Ramtek or Kuhi.",
+    "investment_range": "₹3.5 Lakhs - ₹5 Lakhs",
+    "monthly_profit_est": "₹45,000 - ₹80,000",
+    "break_even_months": 8,
+    "checklist": [
+      "Acquire mechanical certification or hire trained mechanics",
+      "Lease a highway-facing open garage space (800 sq.ft.)",
+      "Equip workshop with pneumatic tools, diagnostic gauges, and jacks",
+      "Partner with tractor spare parts distributors in Nagpur city",
+      "Advertise mobile field-breakdown service to nearby villages"
+    ],
+    "costs_breakdown": {
+      "rent": 15000,
+      "machinery": 210000,
+      "working_capital": 80000,
+      "licensing": 5000,
+      "marketing": 5000
+    }
+  },
+  {
+    "id": "agro_tourism",
+    "name": "Agro-Tourism & Orange Orchard Resort",
+    "sector": "Food & Hospitality",
+    "capital": "high",
+    "risk": "medium",
+    "space": "large",
+    "raw_materials": ["Cottage Furniture", "Tented Rooms", "Orchard Land"],
+    "description": "Convert local orange farm assets into a weekend agro-tourism getaway for Nagpur city dwellers, offering farm-to-table stays.",
+    "investment_range": "₹10 Lakhs - ₹15 Lakhs",
+    "monthly_profit_est": "₹1,10,000 - ₹2,00,000",
+    "break_even_months": 10,
+    "checklist": [
+      "Apply for Agro-Tourism registration with MTDC",
+      "Develop 2-3 eco-cottages on existing agricultural orange farm",
+      "Create farm activities: fruit picking, bullock cart rides, organic dining",
+      "Market resort package on social media channels to Nagpur urbanites",
+      "Leverage Maharashtra Tourism Capital Loan Subsidies"
+    ],
+    "costs_breakdown": {
+      "rent": 0,
+      "machinery": 950000,
+      "working_capital": 150000,
+      "licensing": 25000,
+      "marketing": 75000
+    }
+  },
+  {
+    "id": "micro_bakery",
+    "name": "Micro Bakery & Biscuit Packing",
+    "sector": "Food & Hospitality",
+    "capital": "medium",
+    "risk": "medium",
+    "space": "medium",
+    "raw_materials": ["Wheat Flour", "Sugar", "Butter", "Oven Fuel"],
+    "description": "Establish a bakery producing fresh bread, biscuits, and local cookies, targeting small retail shops in rural bus stops and town hubs.",
+    "investment_range": "₹3.5 Lakhs - ₹5 Lakhs",
+    "monthly_profit_est": "₹40,000 - ₹75,000",
+    "break_even_months": 8,
+    "checklist": [
+      "Apply for FSSAI registration and fire safety NOC",
+      "Lease a 600 sq.ft. space with adequate electricity load",
+      "Purchase deck oven, flour mixer, racks, and packaging sealer",
+      "Set up wholesale distribution agreements with tea stalls and groceries",
+      "Leverage Mudra Kishor loan to finance machinery costs"
+    ],
+    "costs_breakdown": {
+      "rent": 12000,
+      "machinery": 260000,
+      "working_capital": 80000,
+      "licensing": 12000,
+      "marketing": 10000
+    }
+  },
+  {
+    "id": "fertilizer_retail",
+    "name": "Fertilizer & Seed Retail Outlet",
+    "sector": "Retail & Trade",
+    "capital": "medium",
+    "risk": "low",
+    "space": "small",
+    "raw_materials": ["Seed Stocks", "Chemical Fertilizers", "Pesticides"],
+    "description": "Establish a wholesale-cum-retail seed and fertilizer store to cater to local farmers during Rabi and Kharif crop planting cycles.",
+    "investment_range": "₹4 Lakhs - ₹6 Lakhs",
+    "monthly_profit_est": "₹45,000 - ₹80,000",
+    "break_even_months": 9,
+    "checklist": [
+      "Apply for Seed, Fertilizer, and Pesticide license from Krishi Department",
+      "Rent a prominent shop (300 sq.ft.) near local APMC grain market",
+      "Tie up with national fertilizer distributors (IFFCO / Mahadhan)",
+      "Set up chemical-safe dry racking storage cabinets",
+      "Offer farm advisory guidance to build community retail loyalty"
+    ],
+    "costs_breakdown": {
+      "rent": 10000,
+      "machinery": 50000,
+      "working_capital": 380000,
+      "licensing": 20000,
+      "marketing": 5000
+    }
+  },
+  {
+    "id": "solar_pump_dealership",
+    "name": "Solar Pump & Micro-Irrigation Dealership",
+    "sector": "Retail & Trade",
+    "capital": "high",
+    "risk": "medium",
+    "space": "medium",
+    "raw_materials": ["Solar Panels", "Submersible Pumps", "Drip Pipes"],
+    "description": "Establish a dealership offering solar irrigation pump setups and drip irrigation systems, aligning with state agrarian subsidies.",
+    "investment_range": "₹8 Lakhs - ₹11 Lakhs",
+    "monthly_profit_est": "₹90,000 - ₹1,60,000",
+    "break_even_months": 10,
+    "checklist": [
+      "Acquire dealer authorization from solar equipment manufacturers",
+      "Lease a highway-accessible shop and display yard (600 sq.ft.)",
+      "Stock solar pumps, controllers, and micro-drip irrigation pipes",
+      "Register outlet under Mahadbt portal for farmer subsidy processing",
+      "Hire basic plumbing/electrician team for local site installation"
+    ],
+    "costs_breakdown": {
+      "rent": 20000,
+      "machinery": 350000,
+      "working_capital": 550000,
+      "licensing": 15000,
+      "marketing": 25000
+    }
+  },
+  {
+    "id": "general_store",
+    "name": "Super Rural Grocery & General Store",
+    "sector": "Retail & Trade",
+    "capital": "low",
+    "risk": "low",
+    "space": "small",
+    "raw_materials": ["Grains", "FMCG Products", "Household items"],
+    "description": "Open a well-organized general store offering grains, grocery items, cosmetics, and school stationery in rural market squares.",
+    "investment_range": "₹1.5 Lakhs - ₹2.5 Lakhs",
+    "monthly_profit_est": "₹20,000 - ₹38,000",
+    "break_even_months": 7,
+    "checklist": [
+      "Register for Shop Act License and local panchayat NOC",
+      "Rent a prominent village corner shop (200 sq.ft.)",
+      "Set up modular shelving displays and basic billing counter",
+      "Source inventories in bulk from wholesale distributors in Nagpur city",
+      "Incorporate digital UPI payment codes to encourage cashless sales"
+    ],
+    "costs_breakdown": {
+      "rent": 6000,
+      "machinery": 40000,
+      "working_capital": 120000,
+      "licensing": 3000,
+      "marketing": 3000
+    }
+  },
+  {
+    "id": "poultry_farm",
+    "name": "Organic Poultry & Egg Farm",
+    "sector": "Agriculture & Livestock",
+    "capital": "medium",
+    "risk": "medium",
+    "space": "large",
+    "raw_materials": ["Chicks", "Poultry Feed", "Vaccines"],
+    "description": "Establish a free-range organic poultry farm to sell organic eggs and broiler chicken to local restaurants and city markets.",
+    "investment_range": "₹3.5 Lakhs - ₹5.5 Lakhs",
+    "monthly_profit_est": "₹38,000 - ₹68,000",
+    "break_even_months": 8,
+    "checklist": [
+      "Obtain NOC from local Gram Panchayat and health authority",
+      "Construct a protected poultry shed (800 sq.ft.) on agricultural land",
+      "Procure day-old high-yield chicks from regional hatcheries",
+      "Setup automated drinkers, feeders, and egg-laying nests",
+      "Apply for NABARD Poultry Venture Capital Fund (PVCF) subsidy"
+    ],
+    "costs_breakdown": {
+      "rent": 8000,
+      "machinery": 180000,
+      "working_capital": 170000,
+      "licensing": 5000,
+      "marketing": 5000
+    }
+  }
+]

@@ -1,0 +1,80 @@
+{
+  "Katol": {
+    "temp": "31°C",
+    "humidity": "78%",
+    "condition": "Cloudy",
+    "advisory": "High humidity may trigger citrus greening or fruit drop in Orange orchards. Spray 1% Bordeaux mixture. Clear stagnant water from plant roots."
+  },
+  "Saoner": {
+    "temp": "32°C",
+    "humidity": "75%",
+    "condition": "Partly Sunny",
+    "advisory": "Soybean pod-filling stage is active. Monitor for semi-looper infestations. Apply Neem-based pesticide if leaf damage exceeds 10% threshold."
+  },
+  "Bhiwapur": {
+    "temp": "33°C",
+    "humidity": "72%",
+    "condition": "Clear Sky",
+    "advisory": "Chilli crops are in flowering stage. Ensure light micro-irrigation at regular intervals. Avoid water logging to prevent damping-off disease."
+  },
+  "Kuhi": {
+    "temp": "30°C",
+    "humidity": "82%",
+    "condition": "Light Rain",
+    "advisory": "Paddy transplanting completed. Maintain water level at 5cm depth in fields. Add Nitrogen fertilizers during dry intervals."
+  },
+  "Kalmeshwar": {
+    "temp": "31°C",
+    "humidity": "79%",
+    "condition": "Cloudy",
+    "advisory": "Orange fruit harvesting season approaches. Apply copper oxychloride paste to tree trunks to protect from fungal root rots."
+  },
+  "Hingna": {
+    "temp": "32°C",
+    "humidity": "70%",
+    "condition": "Sunny",
+    "advisory": "Cotton vegetative growth stage. Check for Pink Bollworm moths in pheromone traps. Install yellow sticky traps for sucking pests."
+  },
+  "Ramtek": {
+    "temp": "29°C",
+    "humidity": "85%",
+    "condition": "Moderate Rain",
+    "advisory": "Ensure proper field drainage for Tur (Pigeon pea) and Paddy fields to prevent phytophthora blight and root damage."
+  },
+  "Kamptee": {
+    "temp": "32°C",
+    "humidity": "74%",
+    "condition": "Partly Sunny",
+    "advisory": "Veterinary Advisory: Keep cattle inside during rain. Ensure regular vaccination against Foot and Mouth Disease (FMD)."
+  },
+  "Umred": {
+    "temp": "31°C",
+    "humidity": "77%",
+    "condition": "Cloudy",
+    "advisory": "Cotton field weeding is advised. Apply organic mulch to conserve soil moisture. Check for early signs of jassids and aphids."
+  },
+  "Narkhed": {
+    "temp": "31°C",
+    "humidity": "80%",
+    "condition": "Light Showers",
+    "advisory": "Mosambi/Orange growers should start pruning dead twigs. Apply well-decomposed Farm Yard Manure (FYM) with Trichoderma."
+  },
+  "Savner": {
+    "temp": "32°C",
+    "humidity": "75%",
+    "condition": "Partly Sunny",
+    "advisory": "Soybean crop requires nitrogen top-dressing. Take advantage of light rainfall to apply urea or DAP between crop rows."
+  },
+  "Mouda": {
+    "temp": "30°C",
+    "humidity": "83%",
+    "condition": "Light Rain",
+    "advisory": "Paddy tillering stage. Spray zinc sulphate if leaves show light brown rusty spots indicating zinc deficiency."
+  },
+  "Parseoni": {
+    "temp": "29°C",
+    "humidity": "86%",
+    "condition": "Rainy",
+    "advisory": "Drain water from maize crops. Fungal leaf blight may appear in wet conditions. Apply recommended organic fungicides if severe."
+  }
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Krishi Vigyan Kendra (KVK) Nagpur",
+    "tehsil": "Hingna",
+    "type": "Agriculture Training Center",
+    "courses": ["Organic Farming", "Dairy Herd Management", "Drip Irrigation Setup", "Orange Orchard Care"],
+    "address": "CICR Campus, Wardha Road, Hingna, Nagpur",
+    "contact": "07103-275538 / kvknagpur@icar.gov.in"
+  },
+  {
+    "name": "Government Industrial Training Institute (ITI) Katol",
+    "tehsil": "Katol",
+    "type": "Technical ITI",
+    "courses": ["Electrician Trade", "Motor Mechanic", "Food Processing Operator", "Solar System Welder"],
+    "address": "Katol-Jalalkheda Road, Katol, Nagpur",
+    "contact": "07112-222045 / iti.katol@maharashtra.gov.in"
+  },
+  {
+    "name": "Government Industrial Training Institute (ITI) Saoner",
+    "tehsil": "Saoner",
+    "type": "Technical ITI",
+    "courses": ["Machinist", "Fitter", "Computer Operator (COPA)", "Agricultural Equipment Mechanic"],
+    "address": "Chhindwara Highway, Saoner, Nagpur",
+    "contact": "07113-236280 / saoner.iti@msds.in"
+  },
+  {
+    "name": "Common Service Center (CSC) Skill Hub Kuhi",
+    "tehsil": "Kuhi",
+    "type": "Digital Service Training",
+    "courses": ["Basic Digital Literacy", "E-Governance Services", "Financial Bookkeeping", "GST Filing for Small Shops"],
+    "address": "Near Tehsil Office, Kuhi Bazar, Nagpur",
+    "contact": "9890123456 / csc.kuhi@gmail.com"
+  },
+  {
+    "name": "Bhiwapur Chilli Processing Cluster Training Unit",
+    "tehsil": "Bhiwapur",
+    "type": "Food Processing cluster Center",
+    "courses": ["Spice Grinding Machinery Safety", "Dry Chilli Grading & Sorting", "Food Safety Licensing & Packaging"],
+    "address": "MIDC Area, Bhiwapur-Umred Road, Nagpur",
+    "contact": "07115-288344 / bhiwapur.chilli@gov.in"
+  },
+  {
+    "name": "Panchayat Skill Development Center Ramtek",
+    "tehsil": "Ramtek",
+    "type": "Vocational Training Hub",
+    "courses": ["Tailoring & Embroidery", "Poultry Farming Techniques", "E-Commerce for Handloom Weavers"],
+    "address": "Block Development Office, Ramtek Town, Nagpur",
+    "contact": "07114-255102 / bdo.ramtek@nagpur.gov.in"
+  },
+  {
+    "name": "Government Industrial Training Institute (ITI) Kamptee",
+    "tehsil": "Kamptee",
+    "type": "Technical ITI",
+    "courses": ["Welding", "Refrigeration & AC Mechanic", "Solar Pump Installation", "DTP & Web Design"],
+    "address": "Kanhan Road, Kamptee, Nagpur",
+    "contact": "07109-282110 / kamptee.iti@msds.in"
+  },
+  {
+    "name": "Agri-Business Incubation Center, Kalmeshwar",
+    "tehsil": "Kalmeshwar",
+    "type": "Agriculture Training Center",
+    "courses": ["Cattle Feed Formulation", "Cold Chain Logistics", "Mushroom Cultivation"],
+    "address": "Agricultural Produce Market Committee (APMC), Kalmeshwar, Nagpur",
+    "contact": "07118-271033 / apmc.kalmeshwar@gmail.com"
+  }
+]
