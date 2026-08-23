@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sliders, HelpCircle, TrendingUp, DollarSign, Award, Percent } from 'lucide-react';
+import { Sliders, HelpCircle, TrendingUp, DollarSign, Award, Percent, AlertTriangle, Plus, Trash2, ArrowRight } from 'lucide-react';
 import businessArchetypes from '../data/business_archetypes.json';
 
 export default function ScenarioSimulator() {
@@ -31,6 +31,11 @@ export default function ScenarioSimulator() {
   const [volume, setVolume] = useState(1500);
   const [wages, setWages] = useState(25000);
 
+  // Memory & Scenarios
+  const [baseline, setBaseline] = useState(null);
+  const [savedScenarios, setSavedScenarios] = useState([]);
+  const [newScenarioName, setNewScenarioName] = useState('');
+
   // Sync sliders when selecting a different business
   useEffect(() => {
     const defaults = defaultValues[selectedBizId];
@@ -41,30 +46,153 @@ export default function ScenarioSimulator() {
       setVarCost(defaults.varCost);
       setVolume(defaults.volume);
       setWages(defaults.wages);
+      
+      // Update baseline memory on biz change
+      setBaseline({
+        setup: defaults.setup,
+        rent: defaults.rent,
+        wages: defaults.wages,
+        price: defaults.price,
+        varCost: defaults.varCost,
+        volume: defaults.volume,
+        netProfit: (defaults.price * defaults.volume) - (defaults.rent + defaults.wages + 5000 + (defaults.varCost * defaults.volume)),
+        roiMonths: defaults.netProfit > 0 ? (defaults.setup / defaults.netProfit).toFixed(1) : 'Infinite'
+      });
     }
   }, [selectedBizId]);
 
-  // Calculations
+  // Formulas
   const revenue = price * volume;
-  const fixedCost = rent + wages + 5000; // adding 5000 for basic power/water utility
+  const fixedCost = rent + wages + 5000; // 5000 is utility baseline
   const variableCost = varCost * volume;
   const totalCost = fixedCost + variableCost;
   const netProfit = revenue - totalCost;
 
   const contributionMargin = price - varCost;
   const breakEvenVolume = contributionMargin > 0 ? Math.ceil(fixedCost / contributionMargin) : 999999;
-  const roiMonths = netProfit > 0 ? (setup / netProfit).toFixed(1) : 'Infinite';
+  
+  const roiVal = netProfit > 0 ? (setup / netProfit).toFixed(1) : '99';
+  const roiMonths = netProfit > 0 ? parseFloat(roiVal) : 99;
+
+  // Set current as baseline
+  const handleSetBaseline = () => {
+    setBaseline({ setup, rent, wages, price, varCost, volume, netProfit, roiMonths });
+  };
+
+  // Save current scenario
+  const handleSaveScenario = (e) => {
+    e.preventDefault();
+    if (!newScenarioName.trim()) return;
+    setSavedScenarios([
+      ...savedScenarios,
+      {
+        id: Date.now(),
+        name: newScenarioName,
+        bizName: businessArchetypes.find(b => b.id === selectedBizId)?.name || 'Custom',
+        setup, rent, wages, price, varCost, volume, netProfit, roiMonths
+      }
+    ]);
+    setNewScenarioName('');
+  };
+
+  const handleDeleteScenario = (id) => {
+    setSavedScenarios(savedScenarios.filter(s => s.id !== id));
+  };
+
+  // Sensitivity Ranking calculations (Priority 2)
+  const getSensitivityRanking = () => {
+    const calcProfit = (p, v, vc, r, w) => {
+      const rev = p * v;
+      const fc = r + w + 5000;
+      const vcTot = vc * v;
+      return rev - (fc + vcTot);
+    };
+
+    const swingPrice = calcProfit(price * 1.1, volume, varCost, rent, wages) - netProfit;
+    const swingVolume = calcProfit(price, volume * 1.1, varCost, rent, wages) - netProfit;
+    const swingVarCost = calcProfit(price, volume, varCost * 1.1, rent, wages) - netProfit;
+    const swingRent = calcProfit(price, volume, varCost, rent * 1.1, wages) - netProfit;
+    const swingWages = calcProfit(price, volume, varCost, rent, wages * 1.1) - netProfit;
+
+    const factors = [
+      { label: "Product Retail Price", swing: Math.abs(swingPrice), dir: swingPrice > 0 ? "positive" : "negative" },
+      { label: "Expected Sales Volume", swing: Math.abs(swingVolume), dir: swingVolume > 0 ? "positive" : "negative" },
+      { label: "Raw Material (Variable) Cost", swing: Math.abs(swingVarCost), dir: swingVarCost > 0 ? "positive" : "negative" },
+      { label: "Monthly Lease Rent", swing: Math.abs(swingRent), dir: swingRent > 0 ? "positive" : "negative" },
+      { label: "Staff Salaries", swing: Math.abs(swingWages), dir: swingWages > 0 ? "positive" : "negative" }
+    ];
+
+    return factors.sort((a, b) => b.swing - a.swing);
+  };
+
+  const sensitivities = getSensitivityRanking();
+  const topLever = sensitivities[0];
+
+  // Narrative summary auto-generator (Priority 1)
+  const getNarrativeSummary = () => {
+    if (netProfit <= 0) {
+      return `⚠ In this configuration, the business is operating at a loss. Your total operating overhead (fixed costs at ₹${fixedCost.toLocaleString()}/mo) exceeds your unit margins. To fix this, you must increase your selling price or scale up monthly sales volume above ${breakEvenVolume.toLocaleString()} units.`;
+    }
+    
+    const safetyMargin = Math.round(((volume - breakEvenVolume) / volume) * 100);
+    const riskNote = safetyMargin < 20 
+      ? "Your margin of safety is extremely narrow. A small drop in daily customers or raw material price spike will push you into loss."
+      : "You have a comfortable safety margin to absorb market price changes.";
+      
+    return `💡 At current settings, this business is profitable, generating ₹${netProfit.toLocaleString()} net profit monthly with a payback period of ${roiMonths === 99 ? 'Infinite' : roiMonths} months. Your profit is most sensitive to changes in ${topLever.label}. ${riskNote}`;
+  };
+
+  // Risk warning alerts (Priority 3)
+  const getRiskFlags = () => {
+    let flags = [];
+    // Margin of safety check
+    if (netProfit > 0) {
+      const margin = (volume - breakEvenVolume) / volume;
+      if (margin < 0.15) {
+        flags.push("High Price Sensitivity: A 15% drop in selling price wipes out all profits and creates a loss.");
+      }
+    }
+    // High volume check
+    if (volume > 5000 && selectedBizId !== 'fly_ash_bricks') {
+      flags.push(`Ambitious Sales Target: Selling ${volume.toLocaleString()} units/mo is highly challenging for rural blocks. Cross-verify this with nearby tehsil demand.`);
+    }
+    // Setup cost runway check
+    if (setup > 500000 && rent > 25000) {
+      flags.push("Heavy Capital Exposure: Your high rent + setup requirements demand at least 6 months of cash buffer.");
+    }
+    return flags;
+  };
+
+  const riskFlags = getRiskFlags();
+
+  // Context Comparators (Priority 4)
+  const getContextNote = () => {
+    const averageRuralIncome = 22500; // Nagpur rural avg household income
+    const diff = Math.abs(netProfit - averageRuralIncome);
+    if (netProfit > averageRuralIncome) {
+      return `✔ This profit is ₹${diff.toLocaleString()} above the average household income in Nagpur rural tehsils (₹22,500/mo).`;
+    } else {
+      return `ℹ This profit is ₹${diff.toLocaleString()} below the average rural Nagpur household average. Adjust sliders to optimize your setup.`;
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       
-      {/* Informative top pitch */}
-      <div className="info-alert" style={{ borderLeftColor: '#22c55e' }}>
-        <DollarSign className="w-5 h-5 text-green-400" style={{ marginBottom: '6px' }} />
-        <strong>What-If Scenario Simulator:</strong> Don't rely on generic profit projections. Select a business archetype below, adjust the operational parameters using the sliders, and see how lease rents, product pricing, and sales volumes affect your monthly profit, break-even limits, and investment payback schedule.
+      {/* 1. Header Alert */}
+      <div className="info-alert" style={{ borderLeftColor: '#6366f1' }}>
+        <Sliders className="w-5 h-5 text-indigo-400" style={{ marginBottom: '6px' }} />
+        <strong>What-If Scenario Simulator:</strong> Slide inputs to simulate different cost scales (e.g. cheap shed vs proper shop) and discover which levers affect your bottom line the most.
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      {/* 2. Narrative summary block (Priority 1) */}
+      <div className="info-alert" style={{ background: 'rgba(99, 102, 241, 0.05)', borderLeftColor: 'var(--color-secondary)' }}>
+        <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.6', color: '#e2e8f0', fontStyle: 'italic' }}>
+          {getNarrativeSummary()}
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
         
         {/* Sliders Input Panel */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -172,7 +300,7 @@ export default function ScenarioSimulator() {
             {/* Expected Volume */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1' }}>
-                <span>Expected Monthly Transactions / Volume</span>
+                <span>Expected Monthly Volume</span>
                 <strong style={{ color: '#fff' }}>{volume.toLocaleString()} units</strong>
               </div>
               <input
@@ -189,84 +317,164 @@ export default function ScenarioSimulator() {
           </div>
         </div>
 
-        {/* Results Panel */}
-        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          <h3 className="panel-title" style={{ color: '#fff', margin: 0 }}>📊 Financial Output Forecasts</h3>
+        {/* Results Forecast Panel */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            
-            {/* Revenue */}
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>ESTIMATED MONTHLY REVENUE</span>
-              <div style={{ fontSize: '18px', color: '#6366f1', fontWeight: 'bold', fontFamily: 'Outfit, sans-serif', marginTop: '2px' }}>
-                ₹{revenue.toLocaleString()}
-              </div>
+          <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className="panel-title" style={{ color: '#fff', margin: 0 }}>📊 Financial Forecasts</h3>
+              <button 
+                type="button"
+                className="nav-tab"
+                style={{ fontSize: '10px', padding: '4px 8px', margin: 0 }}
+                onClick={handleSetBaseline}
+              >
+                Set as Baseline
+              </button>
             </div>
-
-            {/* Operating Profit */}
-            <div style={{ 
-              background: netProfit > 0 ? 'rgba(34, 197, 94, 0.05)' : 'rgba(239, 68, 68, 0.05)', 
-              padding: '12px', borderRadius: '8px', 
-              border: netProfit > 0 ? '1px solid rgba(34, 197, 94, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)' 
-            }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>ESTIMATED NET PROFIT / MONTH</span>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              {/* Estimated profit card */}
               <div style={{ 
-                fontSize: '18px', 
-                color: netProfit > 0 ? '#22c55e' : '#ef4444', 
-                fontWeight: 'bold', fontFamily: 'Outfit, sans-serif', marginTop: '2px' 
+                background: netProfit > 0 ? 'rgba(34, 197, 94, 0.05)' : 'rgba(239, 68, 68, 0.05)', 
+                padding: '12px', borderRadius: '8px', 
+                border: netProfit > 0 ? '1px solid rgba(34, 197, 94, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)' 
               }}>
-                ₹{netProfit.toLocaleString()}
+                <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>NET PROFIT / MONTH</span>
+                <div style={{ fontSize: '18px', color: netProfit > 0 ? '#22c55e' : '#ef4444', fontWeight: 'bold', fontFamily: 'Outfit, sans-serif' }}>
+                  ₹{netProfit.toLocaleString()}
+                </div>
+                {baseline && (
+                  <span style={{ fontSize: '9px', color: netProfit - baseline.netProfit >= 0 ? '#22c55e' : '#ef4444', display: 'block', marginTop: '2px' }}>
+                    {netProfit - baseline.netProfit >= 0 ? '↑' : '↓'} ₹{Math.abs(netProfit - baseline.netProfit).toLocaleString()} vs baseline
+                  </span>
+                )}
+              </div>
+
+              {/* Payback period card */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>PAYBACK TIMELINE</span>
+                <div style={{ fontSize: '18px', color: '#06b6d4', fontWeight: 'bold', fontFamily: 'Outfit, sans-serif' }}>
+                  {roiMonths === 99 ? 'Infinite' : `${roiMonths} mo`}
+                </div>
+                {baseline && (
+                  <span style={{ fontSize: '9px', color: roiMonths - baseline.roiMonths <= 0 ? '#22c55e' : '#ef4444', display: 'block', marginTop: '2px' }}>
+                    {roiMonths - baseline.roiMonths <= 0 ? '↓' : '↑'} {Math.abs(roiMonths - baseline.roiMonths).toFixed(1)} months vs baseline
+                  </span>
+                )}
+              </div>
+
+              {/* Break-even volume card */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', gridColumn: '1 / -1' }}>
+                <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>BREAK-EVEN TARGET</span>
+                <div style={{ fontSize: '16px', color: '#eab308', fontWeight: 'bold' }}>
+                  {breakEvenVolume.toLocaleString()} units <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>needed per month</span>
+                </div>
               </div>
             </div>
 
-            {/* Break-Even Units */}
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>BREAK-EVEN VOLUME</span>
-              <div style={{ fontSize: '18px', color: '#eab308', fontWeight: 'bold', fontFamily: 'Outfit, sans-serif', marginTop: '2px' }}>
-                {breakEvenVolume.toLocaleString()} <span style={{ fontSize: '10px', fontWeight: 'normal', color: 'var(--text-muted)' }}>units</span>
-              </div>
-              <span style={{ fontSize: '9px', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>
-                Current volume: {volume.toLocaleString()}
-              </span>
+            {/* Context Comparator Note (Priority 4) */}
+            <div style={{ fontSize: '11px', color: '#cbd5e1', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '10px' }}>
+              {getContextNote()}
             </div>
-
-            {/* Payback timeline */}
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PAYBACK TIMELINE (ROI)</span>
-              <div style={{ fontSize: '18px', color: '#06b6d4', fontWeight: 'bold', fontFamily: 'Outfit, sans-serif', marginTop: '2px' }}>
-                {roiMonths} <span style={{ fontSize: '10px', fontWeight: 'normal', color: 'var(--text-muted)' }}>Months</span>
-              </div>
-              <span style={{ fontSize: '9px', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>
-                To recover setup of ₹{setup.toLocaleString()}
-              </span>
-            </div>
-
           </div>
 
-          {/* Break-even progress gauge */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1' }}>
-              <span>Volume vs Break-Even Target</span>
-              <span>{Math.round((volume / breakEvenVolume) * 100)}%</span>
+          {/* 3. Sensitivity Lever Ranking list (Priority 2) */}
+          <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: 0 }}>
+            <h4 style={{ margin: 0, fontSize: '13px', color: '#fff', fontFamily: 'Outfit, sans-serif' }}>
+              ⚡ Sensitivity: What affects your profit most?
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px' }}>
+              {sensitivities.map((s, idx) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)' }}>
+                  <span>{idx + 1}. {s.label}</span>
+                  <span style={{ fontWeight: 'bold', color: idx === 0 ? '#ef4444' : idx === 1 ? '#eab308' : '#94a3b8' }}>
+                    {idx === 0 ? 'High Impact' : idx === 1 ? 'Medium Impact' : 'Low Impact'} (₹{Math.round(s.swing).toLocaleString()} shift)
+                  </span>
+                </div>
+              ))}
             </div>
-            
-            <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-              <div style={{ 
-                width: `${Math.min(100, Math.round((volume / breakEvenVolume) * 100))}%`, 
-                height: '100%', 
-                background: volume >= breakEvenVolume ? 'linear-gradient(90deg, #22c55e 0%, #4ade80 100%)' : 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)'
-              }}></div>
-            </div>
-
-            <span style={{ fontSize: '10px', color: volume >= breakEvenVolume ? '#22c55e' : '#ef4444', fontStyle: 'italic', marginTop: '2px' }}>
-              {volume >= breakEvenVolume 
-                ? '✔ Operating above Break-Even. Your business is profitable.'
-                : '⚠ Operating below Break-Even. Increase sales or reduce operating overhead.'}
-            </span>
           </div>
+
+          {/* 4. Risk / Safety warning boxes (Priority 3) */}
+          {riskFlags.length > 0 && (
+            <div className="section-card" style={{ borderLeft: '4px solid #ef4444', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <AlertTriangle className="w-4 h-4" /> SCENARIO RISK FLAGS:
+              </span>
+              <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '11px', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {riskFlags.map((flag, idx) => <li key={idx}>{flag}</li>)}
+              </ul>
+            </div>
+          )}
 
         </div>
+      </div>
 
+      {/* 5. Scenario comparison A vs B drawer (Priority 4) */}
+      <div className="section-card">
+        <h3 className="panel-title" style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          📂 Saved Scenarios Comparison (Shed vs Storefront)
+        </h3>
+
+        <form onSubmit={handleSaveScenario} style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+          <input 
+            type="text" 
+            className="text-input" 
+            placeholder="e.g. Option A: Low-rent Shed setup"
+            value={newScenarioName}
+            onChange={(e) => setNewScenarioName(e.target.value)}
+            style={{ flex: 1, margin: 0 }}
+          />
+          <button 
+            type="submit" 
+            className="btn-primary" 
+            style={{ background: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)', border: 'none', color: '#fff', borderRadius: '6px', cursor: 'pointer', padding: '0 16px', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            <Plus className="w-4 h-4" /> Save Current
+          </button>
+        </form>
+
+        {savedScenarios.length === 0 ? (
+          <div style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', padding: '10px 0' }}>
+            No saved scenarios yet. Type a name above to save and compare setups side by side.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+            {savedScenarios.map((sc) => (
+              <div key={sc.id} style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '14px', position: 'relative' }}>
+                <button
+                  type="button"
+                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                  onClick={() => handleDeleteScenario(sc.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <strong style={{ color: '#fff', fontSize: '13px', display: 'block', marginBottom: '2px' }}>{sc.name}</strong>
+                <span style={{ fontSize: '10px', color: 'var(--color-secondary)' }}>{sc.bizName}</span>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '8px', color: '#cbd5e1' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Capital Setup:</span>
+                    <strong>₹{sc.setup.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Monthly Rent:</span>
+                    <strong>₹{sc.rent.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Sales Volume:</span>
+                    <strong>{sc.volume.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '4px', color: '#22c55e', fontWeight: 'bold' }}>
+                    <span>Net Profit/mo:</span>
+                    <span>₹{sc.netProfit.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>
