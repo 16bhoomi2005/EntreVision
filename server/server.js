@@ -142,7 +142,12 @@ app.get('/api/v1/amenities',
 );
 out body;`;
 
-      const response = await axios.get(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`, { timeout: 8000 });
+      const response = await axios.get(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`, { 
+        timeout: 8000,
+        headers: {
+          'User-Agent': 'EntreVisionRuralPlanning/1.0 (contact@entrevision.in)'
+        }
+      });
       let sc = 0, col = 0, hosp = 0, trans = 0;
       
       if (response.data && response.data.elements) {
