@@ -87,7 +87,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
         {/* Modal Header */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <span className="resource-badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--color-secondary)', fontSize: '10px' }}>
+          <span className="resource-badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--color-secondary)', fontSize: '10px', whiteSpace: 'nowrap', display: 'inline-block', padding: '4px 12px' }}>
             {isDemoMode ? 'OFFLINE SIMULATION ACTIVE' : 'SECURE ENTRY'}
           </span>
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '20px', margin: '6px 0 2px 0' }}>
