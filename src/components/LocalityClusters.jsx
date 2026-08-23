@@ -81,7 +81,7 @@ export default function LocalityClusters() {
       {/* Informative Header */}
       <div className="info-alert" style={{ borderLeftColor: 'var(--color-secondary)' }}>
         <Layers className="w-5 h-5" style={{ marginBottom: '6px', color: 'var(--color-secondary)' }} />
-        <strong>Locality Clustering Explorer:</strong> We used a K-Means algorithm (based on population density, competitor profiles, agricultural yields, and commercial lease indices) to group Nagpur's 14 blocks into 4 economic clusters. This helps you select a business category that fits your region's structure.
+        <strong>Economic Clusters (K-Means) Model:</strong> We used a K-Means algorithm (based on population density, competitor profiles, agricultural yields, and commercial lease indices) to group Nagpur's 14 blocks into 4 economic clusters. This helps you select a business category that fits your region's structure.
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>

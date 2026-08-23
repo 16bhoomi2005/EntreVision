@@ -615,7 +615,7 @@ out body;`;
             className={`nav-tab ${activeTab === 'weather' ? 'active' : ''}`}
             onClick={() => setActiveTab('weather')}
           >
-            <CloudSun className="w-4 h-4" /> Weather & Season Advisory
+            <CloudSun className="w-4 h-4" /> Weather & Crop Advisory
           </button>
 
           <div style={{ padding: '16px 12px 6px 12px', fontSize: '10px', fontWeight: 'bold', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '8px' }}>
@@ -626,7 +626,7 @@ out body;`;
             className={`nav-tab ${activeTab === 'locality' ? 'active' : ''}`}
             onClick={() => setActiveTab('locality')}
           >
-            <Layers className="w-4 h-4" /> Locality Clusters
+            <Layers className="w-4 h-4" /> Economic Clusters (K-Means)
           </button>
 
           <button 
@@ -837,7 +837,7 @@ out body;`;
                   </button>
                 </div>
                 <div style={{ marginTop: '16px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                  ✔ Collateral-free loan matching &nbsp;|&nbsp; ✔ Mandi rate updates &nbsp;|&nbsp; ✔ ITI/KVK training center map
+                  ✔ Collateral-free loan matching &nbsp;|&nbsp; ✔ Mandi rate updates &nbsp;|&nbsp; ✔ ITI/KVK training center map &nbsp;|&nbsp; ✔ Local success stories
                 </div>
               </div>
 
@@ -845,44 +845,52 @@ out body;`;
               <div>
                 <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', color: '#fff', margin: '0 0 16px 0' }}>Citizen Service Portals</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '15px' }}>
-                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('schemes')}>
-                    <BookOpen className="w-5 h-5 text-cyan-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Loans & Subsidies</h4>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Find government schemes (MUDRA, PMEGP) that offer cash grants for new setups.</p>
-                  </div>
+                  
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('simulator')}>
                     <Sliders className="w-5 h-5 text-indigo-400" />
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Scenario Simulator</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Simulate prices, setup fees, rent, and wages to calculate break-even sales.</p>
                   </div>
-                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('advisor')}>
-                    <MessageSquare className="w-5 h-5 text-cyan-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>AI Business Advisor</h4>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Ask our RAG bot about local crop outputs, permit requirements, or startup tips.</p>
+
+                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('schemes')}>
+                    <BookOpen className="w-5 h-5 text-cyan-400" />
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Loans & Subsidies</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Find government schemes (MUDRA, PMEGP) that offer cash grants for new setups.</p>
                   </div>
+
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('success')}>
                     <Trophy className="w-5 h-5 text-yellow-400" />
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Success Stories</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Read about neighboring business owners in Kuhi and Saoner who started recently.</p>
                   </div>
-                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('consultancy')}>
-                    <Users className="w-5 h-5 text-indigo-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Ask a Local Expert</h4>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Contact agricultural extension offices or partner with other local entrepreneurs.</p>
-                  </div>
+
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('rates')}>
                     <DollarSign className="w-5 h-5 text-green-400" />
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Market Rates Today</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>View wholesale crop prices in local Nagpur mandis before buying raw material.</p>
                   </div>
+
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('training')}>
                     <GraduationCap className="w-5 h-5 text-blue-400" />
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Training Centers</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Find government ITI and KVK classes nearby to learn computer, machinery, or farming skills.</p>
                   </div>
+
+                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('advisor')}>
+                    <MessageSquare className="w-5 h-5 text-cyan-400" />
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>AI Business Advisor</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}><strong>(Instant Automated Helper)</strong> Ask our RAG bot about local crop outputs, permit requirements, or startup tips.</p>
+                  </div>
+
+                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('consultancy')}>
+                    <Users className="w-5 h-5 text-indigo-400" />
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Ask a Local Expert</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}><strong>Talk to a real person</strong> — contact agricultural extension offices or partner with other local entrepreneurs.</p>
+                  </div>
+
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('weather')}>
                     <CloudSun className="w-5 h-5 text-amber-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Crop Advisories</h4>
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Weather & Crop Advisory</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Read sowing advice and agricultural weather safety tips for your block.</p>
                   </div>
                 </div>
