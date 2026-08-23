@@ -89,3 +89,60 @@ Every business detail page (modal) dynamically answers the 8 core questions:
 6. **"What paperwork do I need, and is it a hassle?"** $\rightarrow$ *Answering Q6*: Shows checklists (Udyam, FSSAI, GST, Panchayat NOC) and mudra credit codes.
 7. **"What can go wrong, and has it gone wrong for others?"** $\rightarrow$ *Answering Q7*: Lists un-sugarcoated risk warnings based on the sector.
 8. **"Where do I sell, and to whom?"** $\rightarrow$ *Answering Q8*: Connects users with local peer networks and cooperative supply routes.
+
+---
+
+## 🗄️ 5. PostgreSQL / PostGIS Spatial Database Blueprint
+
+To scale the GIS data layers from Nagpur's 14 blocks to all 350+ blocks across Maharashtra, we transition our file cache to a relational database with PostGIS spatial extensions.
+
+### A. Table Schemas
+
+```sql
+-- Enable PostGIS extensions
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+-- 1. Tehsils Spatial Boundaries
+CREATE TABLE tehsils (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    zone_type VARCHAR(20) CHECK (zone_type IN ('Rural', 'Urban', 'Semi-Urban')),
+    population INT NOT NULL,
+    avg_rent_per_sqft NUMERIC(5,2) NOT NULL,
+    geom GEOMETRY(MultiPolygon, 4326) -- Spatial polygon boundary
+);
+
+CREATE INDEX idx_tehsils_geom ON tehsils USING GIST (geom);
+
+-- 2. Registered Micro-Enterprises
+CREATE TABLE businesses (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    sector VARCHAR(50) CHECK (sector IN ('Agriculture & Livestock', 'Manufacturing', 'IT & Services', 'Food & Hospitality', 'Retail & Trade')),
+    investment_class VARCHAR(10) CHECK (investment_class IN ('low', 'medium', 'high')),
+    geom GEOMETRY(Point, 4326), -- Exact location coordinates
+    tehsil_id INT REFERENCES tehsils(id)
+);
+
+CREATE INDEX idx_businesses_geom ON businesses USING GIST (geom);
+```
+
+### B. Core Spatial Analytics Queries
+
+#### Competitor Proximity Query
+Find all competing businesses within 5 kilometers of a proposed orange pulping site (represented by `POINT(78.58 21.27)`):
+```sql
+SELECT name, sector, ST_Distance(geom, ST_SetSRID(ST_Point(78.58, 21.27), 4326)::geography) AS distance_meters
+FROM businesses
+WHERE sector = 'Agriculture & Livestock'
+  AND ST_DWithin(geom::geography, ST_SetSRID(ST_Point(78.58, 21.27), 4326)::geography, 5000);
+```
+
+#### Point-in-Polygon Tehsil Resolution
+Identify which block boundary contains a newly registered agricultural mill point:
+```sql
+SELECT t.name AS containing_tehsil, t.zone_type
+FROM tehsils t
+WHERE ST_Contains(t.geom, ST_SetSRID(ST_Point(78.92, 21.38), 4326));
+```
+

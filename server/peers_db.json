@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Abhishek Patil",
+    "email": "abhishek.patil@email.com",
+    "sector": "Agriculture & Livestock",
+    "tehsil": "Katol",
+    "idea": "Orange juice processing & pulping unit using local farm-fresh Nagpur Mandarin oranges.",
+    "date": "2026-08-20"
+  },
+  {
+    "name": "Shreya Deshmukh",
+    "email": "shreya.d@email.com",
+    "sector": "Agriculture & Livestock",
+    "tehsil": "Kamptee",
+    "idea": "Organic dairy milk production and automated processing hub with veterinary support.",
+    "date": "2026-08-19"
+  },
+  {
+    "name": "Rohan Joshi",
+    "email": "rohan.joshi@email.com",
+    "sector": "IT & Services",
+    "tehsil": "Hingna",
+    "idea": "Farming machinery booking app for local tractors and harvesters.",
+    "date": "2026-08-21"
+  },
+  {
+    "name": "Nikita Sharma",
+    "email": "nikita.sharma@email.com",
+    "sector": "Food & Hospitality",
+    "tehsil": "Kalmeshwar",
+    "idea": "Citrus-based highway cafe and organic farm-to-table diner.",
+    "date": "2026-08-18"
+  },
+  {
+    "name": "Karan Malhotra",
+    "email": "karan.m@email.com",
+    "sector": "Manufacturing",
+    "tehsil": "Hingna",
+    "idea": "Small-scale automated cotton ginning & weaving unit.",
+    "date": "2026-08-15"
+  },
+  {
+    "name": "Pratiksha Shah",
+    "email": "pratiksha.s@email.com",
+    "sector": "Retail & Trade",
+    "tehsil": "Bhiwapur",
+    "idea": "B2B trading platform connecting chilli farmers directly to urban distributors.",
+    "date": "2026-08-22"
+  }
+]

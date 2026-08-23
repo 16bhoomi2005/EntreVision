@@ -45,18 +45,16 @@ export default function WeatherAdvisory() {
     if (!coords) return;
 
     setLoading(true);
-    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&relative_humidity_2m=true`)
+    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1' : '/api/v1';
+    fetch(`${apiBase}/weather?tehsil=${selectedTehsil}`)
       .then(res => res.json())
       .then(data => {
-        if (data && data.current_weather) {
-          const cw = data.current_weather;
-          setLiveWeather({
-            temp: `${Math.round(cw.temperature)}°C`,
-            humidity: data.current_weather_relative_humidity_2m ? `${data.current_weather_relative_humidity_2m}%` : "62%",
-            wind: `${cw.windspeed} km/h`,
-            condition: translateWmoCode(cw.weathercode)
-          });
-        }
+        setLiveWeather({
+          temp: data.temp,
+          humidity: data.humidity,
+          wind: data.wind,
+          condition: translateWmoCode(data.weatherCode)
+        });
         setLoading(false);
       })
       .catch(err => {

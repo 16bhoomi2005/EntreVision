@@ -104,41 +104,22 @@ export default function App() {
       return;
     }
 
-    const { lat, lon } = tehsilCoords[selectedTehsil];
     setLoadingAmenities(true);
+    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1' : '/api/v1';
 
-    const query = `[out:json][timeout:15];
-(
-  node["amenity"="school"](around:10000,${lat},${lon});
-  node["amenity"="college"](around:10000,${lat},${lon});
-  node["amenity"="hospital"](around:10000,${lat},${lon});
-  node["highway"="bus_stop"](around:10000,${lat},${lon});
-);
-out body;`;
-
-    fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+    fetch(`${apiBase}/amenities?tehsil=${selectedTehsil}`)
       .then(res => res.json())
       .then(data => {
-        let sc = 0, col = 0, hosp = 0, trans = 0;
-        if (data && data.elements) {
-          data.elements.forEach(el => {
-            const tags = el.tags || {};
-            if (tags.amenity === 'school') sc++;
-            else if (tags.amenity === 'college') col++;
-            else if (tags.amenity === 'hospital') hosp++;
-            else if (tags.highway === 'bus_stop') trans++;
-          });
-        }
         setLiveAmenities({
-          schools: sc || 5,
-          colleges: col || 2,
-          hospitals: hosp || 3,
-          transport: trans || 4
+          schools: data.schools,
+          colleges: data.colleges,
+          hospitals: data.hospitals,
+          transport: data.transport
         });
         setLoadingAmenities(false);
       })
       .catch(err => {
-        console.error("OSM API error:", err);
+        console.error("Failed fetching infrastructure amenities:", err);
         const details = nagpurData?.tehsil_details?.[selectedTehsil] || {};
         setLiveAmenities({
           schools: details.schools || 5,

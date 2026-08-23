@@ -113,10 +113,8 @@ export default function Consultancy({ nagpurData }) {
   ];
 
   const [activeSubTab, setActiveSubTab] = useState('peers'); // 'peers' | 'gov'
-  const [peers, setPeers] = useState(() => {
-    const saved = localStorage.getItem('entrevision_peers');
-    return saved ? JSON.parse(saved) : defaultPeers;
-  });
+  const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1' : '/api/v1';
+  const [peers, setPeers] = useState(defaultPeers);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -129,29 +127,49 @@ export default function Consultancy({ nagpurData }) {
   const [filterTehsil, setFilterTehsil] = useState('All');
 
   useEffect(() => {
-    localStorage.setItem('entrevision_peers', JSON.stringify(peers));
-  }, [peers]);
+    fetch(`${apiBase}/peers`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.peers && data.peers.length > 0) {
+          setPeers(data.peers);
+        }
+      })
+      .catch(err => console.warn("Failed fetching peers from server:", err));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !email || !idea) return;
 
-    const newPeer = {
-      name,
-      email,
-      sector,
-      tehsil,
-      idea,
-      date: new Date().toISOString().split('T')[0]
-    };
+    const payload = { name, email, sector, tehsil, idea };
 
-    const updatedPeers = [newPeer, ...peers];
-    setPeers(updatedPeers);
-    setSubmitted(true);
-
-    // Calculate matches immediately
-    const matches = peers.filter(p => p.sector === sector || p.tehsil === tehsil);
-    setMatchedPeers(matches);
+    fetch(`${apiBase}/peers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.peer) {
+          setPeers(prev => [data.peer, ...prev]);
+          setSubmitted(true);
+          const matches = peers.filter(p => p.sector === sector || p.tehsil === tehsil);
+          setMatchedPeers(matches);
+        }
+      })
+      .catch(err => {
+        console.error("Peers submission error:", err);
+        const newPeer = {
+          name,
+          email,
+          sector,
+          tehsil,
+          idea,
+          date: new Date().toISOString().split('T')[0]
+        };
+        setPeers(prev => [newPeer, ...prev]);
+        setSubmitted(true);
+      });
 
     // Reset form after a small delay
     setTimeout(() => {

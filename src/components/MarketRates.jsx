@@ -13,47 +13,21 @@ export default function MarketRates() {
 
   useEffect(() => {
     setLoading(true);
-    
-    // Query Daily APMC Prices from GOI Registry
-    const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a86454359441?api-key=${apiKey}&format=json&limit=50&filters[state]=Maharashtra&filters[district]=Nagpur`;
+    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1' : '/api/v1';
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second network timeout
-
-    fetch(url, { signal: controller.signal })
+    fetch(`${apiBase}/mandi-rates`)
       .then((res) => res.json())
       .then((data) => {
-        clearTimeout(timeoutId);
-        if (data && data.records && data.records.length > 0) {
-          // Map OGD records to our internal format
-          const mapped = data.records.map((r) => ({
-            commodity: r.commodity,
-            mandi: r.market,
-            min_price: parseInt(r.min_price) || 0,
-            max_price: parseInt(r.max_price) || 0,
-            model_price: parseInt(r.modal_price) || 0,
-            unit: "per Quintal",
-            last_updated: r.arrival_date,
-            trend: "stable"
-          }));
-          setRatesList(mapped);
-          setDataSource('live');
-        } else {
-          // No records found in daily index, fall back to high-fidelity cache
-          setRatesList(staticMandiRates);
-          setDataSource('local');
-        }
+        setRatesList(data.records);
+        setDataSource(data.source);
         setLoading(false);
       })
       .catch((err) => {
-        clearTimeout(timeoutId);
-        console.error("APMC API Fetch timed out or failed. Falling back to local cache:", err);
+        console.error("Failed fetching rates from backend:", err);
         setRatesList(staticMandiRates);
         setDataSource('local');
         setLoading(false);
       });
-
-    return () => clearTimeout(timeoutId);
   }, []);
 
   // Extract unique Mandis dynamically
