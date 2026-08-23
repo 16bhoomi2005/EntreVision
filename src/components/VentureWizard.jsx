@@ -1,8 +1,57 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, ArrowLeft, RefreshCw, Landmark, Shield, HelpCircle, Layers, CheckCircle2, User, Award } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, RefreshCw, Landmark, Shield, HelpCircle, Layers, CheckCircle2, User, Award, Save } from 'lucide-react';
 import businessArchetypes from '../data/business_archetypes.json';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 
-export default function VentureWizard({ onSelectBusiness }) {
+export default function VentureWizard({ onSelectBusiness, onOpenAuthModal }) {
+  const { user, isDemoMode } = useAuth();
+  const [saveStatus, setSaveStatus] = useState(''); // '', 'saving', 'saved', 'error'
+
+  const handleSaveMatch = async () => {
+    if (!user) {
+      if (onOpenAuthModal) onOpenAuthModal();
+      return;
+    }
+
+    setSaveStatus('saving');
+
+    const matchPayload = {
+      user_id: user.id,
+      sector: answers.sector,
+      capital_range: answers.capital,
+      space_type: answers.space,
+      skill: answers.strength,
+      risk_level: answers.risk,
+      tehsil: answers.tehsil,
+      matched_businesses: results.slice(0, 5)
+    };
+
+    if (isDemoMode) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('entrevision_simulated_matches') || '[]');
+        saved.unshift({ id: 'sim-' + Date.now(), ...matchPayload, created_at: new Date().toISOString() });
+        localStorage.setItem('entrevision_simulated_matches', JSON.stringify(saved));
+        setSaveStatus('saved');
+      } catch (err) {
+        setSaveStatus('error');
+      }
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('saved_matches')
+        .insert([matchPayload]);
+
+      if (error) throw error;
+      setSaveStatus('saved');
+    } catch (err) {
+      console.error("Error saving match:", err);
+      setSaveStatus('error');
+    }
+  };
+
   // Mode selection: null (choose mode) | 'beginner' | 'advanced'
   const [mode, setMode] = useState(null);
   const [step, setStep] = useState(1);
@@ -646,14 +695,33 @@ export default function VentureWizard({ onSelectBusiness }) {
                   : 'Analytical scoring matching your precise filters & yields.'}
               </p>
             </div>
-            <button
-              type="button"
-              className="nav-tab"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0, fontSize: '11px', padding: '6px 12px' }}
-              onClick={resetWizard}
-            >
-              <RefreshCw className="w-3.5 h-3.5" /> Start Over
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '6px', margin: 0, fontSize: '11px', 
+                  padding: '6px 12px', background: saveStatus === 'saved' ? '#22c55e' : 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)',
+                  border: 'none', color: '#fff', borderRadius: '6px', cursor: 'pointer'
+                }}
+                onClick={handleSaveMatch}
+                disabled={saveStatus === 'saving' || saveStatus === 'saved'}
+              >
+                <Save className="w-3.5 h-3.5" />
+                {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved Plan ✓' : 'Save Match'}
+              </button>
+              <button
+                type="button"
+                className="nav-tab"
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0, fontSize: '11px', padding: '6px 12px' }}
+                onClick={() => {
+                  setSaveStatus('');
+                  resetWizard();
+                }}
+              >
+                <RefreshCw className="w-3.5 h-3.5" /> Start Over
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

@@ -17,7 +17,10 @@ import {
   TrendingDown,
   MessageSquare,
   Layers,
-  Sliders
+  Sliders,
+  Folder,
+  LogOut,
+  User
 } from 'lucide-react';
 
 import MapComponent from './components/MapComponent';
@@ -33,6 +36,9 @@ import TrainingCenters from './components/TrainingCenters';
 import WeatherAdvisory from './components/WeatherAdvisory';
 import MethodologyPlayground from './components/MethodologyPlayground';
 import LocalityClusters from './components/LocalityClusters';
+import SavedPlans from './components/SavedPlans';
+import AuthModal from './components/AuthModal';
+import { useAuth } from './context/AuthContext';
 import ScenarioSimulator from './components/ScenarioSimulator';
 import AIBusinessAdvisor from './components/AIBusinessAdvisor';
 
@@ -64,6 +70,9 @@ ChartJS.register(
 import rawNagpurData from './data/nagpur_data.json';
 
 export default function App() {
+  const { user, signOut } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'khoj' | 'recommend' | 'compare' | 'schemes' | 'consultancy' | 'stats' | 'about'
   const [nagpurData, setNagpurData] = useState(null);
   const [selectedTehsil, setSelectedTehsil] = useState(null);
@@ -543,6 +552,15 @@ export default function App() {
             <Sparkles className="w-4 h-4" /> Venture Khoj (Start Here)
           </button>
 
+          {user && (
+            <button 
+              className={`nav-tab ${activeTab === 'saved_plans' ? 'active' : ''}`}
+              onClick={() => setActiveTab('saved_plans')}
+            >
+              <Folder className="w-4 h-4" /> My Saved Plans
+            </button>
+          )}
+
           <button 
             className={`nav-tab ${activeTab === 'schemes' ? 'active' : ''}`}
             onClick={() => setActiveTab('schemes')}
@@ -779,9 +797,38 @@ export default function App() {
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="resource-badge agriculture">
+            <span className="resource-badge agriculture" style={{ margin: 0 }}>
               Rural Vidarbha Focus
             </span>
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '4px 12px' }}>
+                <User className="w-3.5 h-3.5 text-indigo-400" />
+                <span style={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}>
+                  {user.user_metadata.display_name || user.email.split('@')[0]}
+                </span>
+                <button 
+                  type="button" 
+                  onClick={signOut}
+                  style={{ background: 'none', border: 'none', padding: 0, color: '#ef4444', display: 'flex', alignItems: 'center', cursor: 'pointer', marginLeft: '6px' }}
+                  title="Log Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ 
+                  fontSize: '11px', padding: '6px 14px', margin: 0, 
+                  background: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)', 
+                  border: 'none', color: '#fff', borderRadius: '20px', cursor: 'pointer' 
+                }}
+                onClick={() => setAuthModalOpen(true)}
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </header>
 
@@ -900,10 +947,26 @@ export default function App() {
         {activeTab === 'khoj' && (
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '32px', overflowY: 'auto' }}>
-              <VentureWizard onSelectBusiness={(biz) => {
-                setSelectedBusiness(biz);
-                setShowDetailModal(true);
-              }} />
+              <VentureWizard 
+                onSelectBusiness={(biz) => {
+                  setSelectedBusiness(biz);
+                  setShowDetailModal(true);
+                }} 
+                onOpenAuthModal={() => setAuthModalOpen(true)}
+              />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'saved_plans' && (
+          <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
+            <div style={{ padding: '32px', overflowY: 'auto' }}>
+              <SavedPlans 
+                onSelectBusiness={(biz) => {
+                  setSelectedBusiness(biz);
+                  setShowDetailModal(true);
+                }} 
+              />
             </div>
           </div>
         )}
@@ -1061,7 +1124,10 @@ export default function App() {
         {activeTab === 'consultancy' && (
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '24px', overflowY: 'auto' }}>
-              <Consultancy nagpurData={nagpurData} />
+              <Consultancy 
+                nagpurData={nagpurData} 
+                onOpenAuthModal={() => setAuthModalOpen(true)}
+              />
             </div>
           </div>
         )}
@@ -1270,6 +1336,12 @@ export default function App() {
         business={selectedBusiness}
         onLocateOnMap={handleLocateSectorOnMap}
         selectedTehsil={selectedTehsil}
+      />
+
+      {/* Supabase Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
       />
     </div>
   );

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Send, Search, UserPlus, CheckCircle2, Phone, Mail, Landmark, MapPin } from 'lucide-react';
+import { Users, Send, Search, UserPlus, CheckCircle2, Phone, Mail, Landmark, MapPin, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 
-export default function Consultancy({ nagpurData }) {
+export default function Consultancy({ nagpurData, onOpenAuthModal }) {
   // Sample pre-populated peers in Nagpur Rural areas
   const defaultPeers = [
     {
@@ -113,11 +115,9 @@ export default function Consultancy({ nagpurData }) {
   ];
 
   const [activeSubTab, setActiveSubTab] = useState('peers'); // 'peers' | 'gov'
-  const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1' : '/api/v1';
+  const { user, isDemoMode } = useAuth();
   const [peers, setPeers] = useState(defaultPeers);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [sector, setSector] = useState('Agriculture & Livestock');
   const [tehsil, setTehsil] = useState('Katol');
   const [idea, setIdea] = useState('');
@@ -127,56 +127,100 @@ export default function Consultancy({ nagpurData }) {
   const [filterTehsil, setFilterTehsil] = useState('All');
 
   useEffect(() => {
-    fetch(`${apiBase}/peers`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.peers && data.peers.length > 0) {
-          setPeers(data.peers);
-        }
-      })
-      .catch(err => console.warn("Failed fetching peers from server:", err));
-  }, []);
+    const fetchPeers = async () => {
+      if (isDemoMode) {
+        const sim = JSON.parse(localStorage.getItem('entrevision_simulated_peers') || '[]');
+        setPeers([...sim, ...defaultPeers]);
+        return;
+      }
 
-  const handleSubmit = (e) => {
+      try {
+        const { data, error } = await supabase
+          .from('peer_consultancy_posts')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        const mapped = data.map(p => ({
+          name: p.user_name,
+          email: p.user_email,
+          sector: p.sector,
+          tehsil: p.tehsil,
+          idea: p.idea,
+          date: new Date(p.created_at).toISOString().split('T')[0]
+        }));
+        
+        setPeers([...mapped, ...defaultPeers]);
+      } catch (err) {
+        console.error("Error loading Supabase peers, loading local defaults:", err);
+        setPeers(defaultPeers);
+      }
+    };
+    fetchPeers();
+  }, [isDemoMode]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !idea) return;
+    if (!user || !idea.trim()) return;
 
-    const payload = { name, email, sector, tehsil, idea };
+    const pName = user.user_metadata.display_name || user.email.split('@')[0];
+    const pEmail = user.email;
 
-    fetch(`${apiBase}/peers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.peer) {
-          setPeers(prev => [data.peer, ...prev]);
-          setSubmitted(true);
-          const matches = peers.filter(p => p.sector === sector || p.tehsil === tehsil);
-          setMatchedPeers(matches);
-        }
-      })
-      .catch(err => {
-        console.error("Peers submission error:", err);
-        const newPeer = {
-          name,
-          email,
-          sector,
-          tehsil,
-          idea,
-          date: new Date().toISOString().split('T')[0]
-        };
-        setPeers(prev => [newPeer, ...prev]);
-        setSubmitted(true);
-      });
+    const newPostPayload = {
+      user_id: user.id,
+      user_name: pName,
+      user_email: pEmail,
+      sector,
+      tehsil,
+      idea
+    };
 
-    // Reset form after a small delay
-    setTimeout(() => {
-      setName('');
-      setEmail('');
-      setIdea('');
-    }, 4000);
+    if (isDemoMode) {
+      const sim = JSON.parse(localStorage.getItem('entrevision_simulated_peers') || '[]');
+      const newPeer = {
+        name: pName,
+        email: pEmail,
+        sector,
+        tehsil,
+        idea,
+        date: new Date().toISOString().split('T')[0]
+      };
+      sim.unshift(newPeer);
+      localStorage.setItem('entrevision_simulated_peers', JSON.stringify(sim));
+      setPeers(prev => [newPeer, ...prev]);
+      setSubmitted(true);
+      
+      const matches = peers.filter(p => p.sector === sector || p.tehsil === tehsil);
+      setMatchedPeers(matches);
+      setTimeout(() => setIdea(''), 4000);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('peer_consultancy_posts')
+        .insert([newPostPayload]);
+
+      if (error) throw error;
+
+      const newPeer = {
+        name: pName,
+        email: pEmail,
+        sector,
+        tehsil,
+        idea,
+        date: new Date().toISOString().split('T')[0]
+      };
+      setPeers(prev => [newPeer, ...prev]);
+      setSubmitted(true);
+      
+      const matches = peers.filter(p => p.sector === sector || p.tehsil === tehsil);
+      setMatchedPeers(matches);
+      setTimeout(() => setIdea(''), 4000);
+    } catch (err) {
+      console.error("Error inserting peer post:", err);
+    }
   };
 
   // Filter peers based on search query
@@ -261,7 +305,23 @@ export default function Consultancy({ nagpurData }) {
               Add your name and business idea so other local entrepreneurs in Nagpur rural can view and contact you to partner.
             </p>
 
-            {submitted ? (
+            {!user ? (
+              <div style={{ textAlign: 'center', padding: '24px 16px', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '8px', background: 'rgba(255,255,255,0.01)' }}>
+                <Lock className="w-8 h-8 text-indigo-400" style={{ margin: '0 auto 12px auto' }} />
+                <h4 style={{ color: '#fff', marginBottom: '8px' }}>Posting requires Authenticated Account</h4>
+                <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: '1.4' }}>
+                  You must be logged in to register a business plan idea in the Nagpur block directory. Gating posts protects the network from spam and builds trust.
+                </p>
+                <button 
+                  type="button"
+                  className="btn-primary"
+                  style={{ width: 'auto', padding: '8px 20px', background: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)', border: 'none', color: '#fff', borderRadius: '6px', cursor: 'pointer' }}
+                  onClick={onOpenAuthModal}
+                >
+                  Sign In to Post
+                </button>
+              </div>
+            ) : submitted ? (
               <div style={{ textAlign: 'center', padding: '20px 0' }}>
                 <CheckCircle2 className="w-12 h-12 text-green-400" style={{ margin: '0 auto 10px auto' }} />
                 <h4 style={{ color: '#fff', marginBottom: '8px' }}>Registered Successfully!</h4>
@@ -292,28 +352,8 @@ export default function Consultancy({ nagpurData }) {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="filter-group">
-                <div>
-                  <label className="input-label">Full Name</label>
-                  <input 
-                    type="text" 
-                    className="text-input" 
-                    value={name} 
-                    onChange={(e) => setName(e.target.value)} 
-                    placeholder="e.g. Rajesh Kumar" 
-                    required 
-                  />
-                </div>
-
-                <div>
-                  <label className="input-label">Phone or Email Address</label>
-                  <input 
-                    type="text" 
-                    className="text-input" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="e.g. rajesh@email.com or 9890xxxxxx" 
-                    required 
-                  />
+                <div style={{ padding: '8px 10px', background: 'rgba(99, 102, 241, 0.08)', borderRadius: '6px', border: '1px solid rgba(99, 102, 241, 0.15)', fontSize: '11px', color: '#cbd5e1', marginBottom: '4px' }}>
+                  Posting signed as: <strong>{user.user_metadata.display_name || user.email.split('@')[0]}</strong> ({user.email})
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
