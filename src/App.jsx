@@ -14,7 +14,10 @@ import {
   DollarSign,
   CloudSun,
   GraduationCap,
-  TrendingDown
+  TrendingDown,
+  MessageSquare,
+  Layers,
+  Sliders
 } from 'lucide-react';
 
 import MapComponent from './components/MapComponent';
@@ -29,6 +32,9 @@ import MarketRates from './components/MarketRates';
 import TrainingCenters from './components/TrainingCenters';
 import WeatherAdvisory from './components/WeatherAdvisory';
 import MethodologyPlayground from './components/MethodologyPlayground';
+import LocalityClusters from './components/LocalityClusters';
+import ScenarioSimulator from './components/ScenarioSimulator';
+import AIBusinessAdvisor from './components/AIBusinessAdvisor';
 
 // Import Chart.js logic
 import { 
@@ -493,6 +499,20 @@ export default function App() {
           </button>
 
           <button 
+            className={`nav-tab ${activeTab === 'simulator' ? 'active' : ''}`}
+            onClick={() => setActiveTab('simulator')}
+          >
+            <Sliders className="w-4 h-4" /> Scenario Simulator
+          </button>
+
+          <button 
+            className={`nav-tab ${activeTab === 'advisor' ? 'active' : ''}`}
+            onClick={() => setActiveTab('advisor')}
+          >
+            <MessageSquare className="w-4 h-4" /> AI Business Advisor
+          </button>
+
+          <button 
             className={`nav-tab ${activeTab === 'success' ? 'active' : ''}`}
             onClick={() => setActiveTab('success')}
           >
@@ -530,6 +550,13 @@ export default function App() {
           <div style={{ padding: '16px 12px 6px 12px', fontSize: '10px', fontWeight: 'bold', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '8px' }}>
             Explore Data (Analysts)
           </div>
+
+          <button 
+            className={`nav-tab ${activeTab === 'locality' ? 'active' : ''}`}
+            onClick={() => setActiveTab('locality')}
+          >
+            <Layers className="w-4 h-4" /> Locality Clusters
+          </button>
 
           <button 
             className={`nav-tab ${activeTab === 'recommend' ? 'active' : ''}`}
@@ -744,6 +771,16 @@ export default function App() {
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Loans & Subsidies</h4>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Find government schemes (MUDRA, PMEGP) that offer cash grants for new setups.</p>
                   </div>
+                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('simulator')}>
+                    <Sliders className="w-5 h-5 text-indigo-400" />
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Scenario Simulator</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Simulate prices, setup fees, rent, and wages to calculate break-even sales.</p>
+                  </div>
+                  <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('advisor')}>
+                    <MessageSquare className="w-5 h-5 text-cyan-400" />
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>AI Business Advisor</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Ask our RAG bot about local crop outputs, permit requirements, or startup tips.</p>
+                  </div>
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('success')}>
                     <Trophy className="w-5 h-5 text-yellow-400" />
                     <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Success Stories</h4>
@@ -886,6 +923,30 @@ export default function App() {
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '32px', overflowY: 'auto' }}>
               <WeatherAdvisory />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'simulator' && (
+          <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
+            <div style={{ padding: '32px', overflowY: 'auto' }}>
+              <ScenarioSimulator />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'advisor' && (
+          <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
+            <div style={{ padding: '32px', overflowY: 'auto' }}>
+              <AIBusinessAdvisor />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'locality' && (
+          <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
+            <div style={{ padding: '32px', overflowY: 'auto' }}>
+              <LocalityClusters />
             </div>
           </div>
         )}

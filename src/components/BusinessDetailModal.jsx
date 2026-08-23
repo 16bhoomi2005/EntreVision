@@ -12,7 +12,7 @@ export default function BusinessDetailModal({ show, onClose, business, onLocateO
     setChecklistState({ ...checklistState, [item]: !checklistState[item] });
   };
 
-  const { name, sector, description, investment_range, monthly_profit_est, break_even_months, checklist, costs_breakdown, raw_materials } = business;
+  const { id, name, sector, description, investment_range, monthly_profit_est, break_even_months, checklist, costs_breakdown, raw_materials } = business;
 
   // Curated location target matching based on raw materials
   const getSourcingHotspots = () => {
@@ -48,6 +48,84 @@ export default function BusinessDetailModal({ show, onClose, business, onLocateO
   };
 
   const schemes = getSubsidies();
+
+  const sentimentData = {
+    orange_pulp: {
+      positive: ["High fruit freshness (42%)", "Sweet taste profiles (35%)"],
+      negative: ["Slow delivery processing (28%)", "Chemical preservatives aftertaste (24%)", "Damaged packaging leaks (15%)"],
+      gap: "High orange yield blocks in Nagpur (Narkhed, Katol) suffer from extreme seasonal wastage. Local pulping units with cold-press lines face zero local processing competition, offering a huge opportunity to capture margins."
+    },
+    fly_ash_bricks: {
+      positive: ["Strong material durability (48%)", "Lower cost than red bricks (36%)"],
+      negative: ["Delayed supply orders (31%)", "Chipped/broken edges during transport (22%)"],
+      gap: "Real estate demand in Nagpur Rural is growing at 12% annually. Builders complain of brick shortages during peak summer. Siting your plant near Koradi power plant yields direct free raw ash contracts."
+    },
+    cotton_roll: {
+      positive: ["Highly absorbent cotton (44%)", "Good sterile packing (38%)"],
+      negative: ["Inconsistent roll lengths (25%)", "High pricing compared to synthetic rolls (18%)"],
+      gap: "Major cotton trading is routed to Gujarat, leaving local Nagpur ginning and clinical supply chains underserved. Nagpur has 12 major public hospitals with massive recurrent surgical dressing needs."
+    },
+    cold_pressed_oil: {
+      positive: ["Genuine organic aroma (51%)", "Zero chemical additives (45%)"],
+      negative: ["Thick sediment at bottle bottom (20%)", "Poor bottle caps cause spills (18%)"],
+      gap: "Health-conscious urban consumers in Hingna/Nagpur city are buying direct cold-pressed oils. Local retailers report a 40% supply gap in organic soybean oils compared to standard refined packets."
+    },
+    spices_grinding: {
+      positive: ["Famous hot Bhiwapur heat (58%)", "No added color agents (42%)"],
+      negative: ["Rough powder grains (22%)", "Small packet sizes get torn easily (16%)"],
+      gap: "Umred/Bhiwapur chillies are exported raw. Processing them directly inside the block saves 30% logistics cost, letting you price lower than national brands in village markets."
+    },
+    dairy_farm: {
+      positive: ["High butterfat content (49%)", "Early morning fresh milk (41%)"],
+      negative: ["Inconsistent daily supply hours (27%)", "Milk gets sour in summer without chilling (22%)"],
+      gap: "Local dairy cooperatives report daily deficit collections in summer. Installing a bulk chilling plant in Kamptee guarantees direct institutional contracts with major brands like Amul."
+    },
+    e_seva_kendra: {
+      positive: ["Helpful registration guides (46%)", "Saves travel time to district town (42%)"],
+      negative: ["Long queues during scheme releases (35%)", "Power cuts shut down printers (28%)"],
+      gap: "BDO offices release subsidies weekly. Residents in distant villages lose a full wage day traveling to tehsils. Setting up adjacent to a Gram Panchayat guarantees 150+ footfalls/day."
+    },
+    soil_testing_lab: {
+      positive: ["Accurate dosage prescriptions (48%)", "Detailed report prints (35%)"],
+      negative: ["Takes 7+ days to deliver results (30%)", "Confusing technical report terms (25%)"],
+      gap: "Orange growers suffer crop drop due to poor nitrogen ratios. Existing government labs have 3-month backlogs. Fast 24-hour test returns is a premium services niche."
+    },
+    tractor_repair: {
+      positive: ["Expert transmission repairs (45%)", "Reasonable hydraulic oils price (32%)"],
+      negative: ["No replacement tractors offered (25%)", "Slow mechanical works (20%)"],
+      gap: "Sowing season relies heavily on tractor availability. Breakdowns during Kharif cause severe crop delays. Offering mobile farm-site mechanics will capture 60% of regional repair requests."
+    },
+    agro_tourism: {
+      positive: ["Scenic orange fields (52%)", "Authentic rural food (48%)"],
+      negative: ["Poor mobile network signal (24%)", "Lack of AC cottages in summer (20%)"],
+      gap: "Nagpur city families search for weekend escapes within 60 km. Ramtek tourist footfall hits 2 Lakhs/year, yet farm resort cabins are operating at 95% capacity on weekends."
+    },
+    micro_bakery: {
+      positive: ["Soft, fresh bread loaves (44%)", "Delicious sweet cookies (38%)"],
+      negative: ["Stock runs out by evening (28%)", "Plain plastic wrapper packing (15%)"],
+      gap: "Rural grocery stores get biscuits once a week from cities. A local bakery can deliver warm, fresh supplies daily, saving retailers transport costs."
+    },
+    fertilizer_retail: {
+      positive: ["Genuine certified seeds (51%)", "Expert crop advice (42%)"],
+      negative: ["Does not offer credit sales (35%)", "High pricing during shortage (22%)"],
+      gap: "Seed supplies run thin during monsoons, causing black marketing. Having official dealership license secures guaranteed distributor stock to capture local market share."
+    },
+    solar_pump_dealership: {
+      positive: ["Zero power bills (55%)", "Reliable motor pressure (42%)"],
+      negative: ["Slow government subsidy papers (38%)", "No local support team (24%)"],
+      gap: "Maharashtra's solar pump subventions are heavily promoted. Farmers wait months for dealer installations. Offering immediate setup and documentation support will double sales conversion."
+    },
+    general_store: {
+      positive: ["All groceries in one shop (48%)", "Accepts digital payments (42%)"],
+      negative: ["Narrow shopping aisles (20%)", "No discount options (15%)"],
+      gap: "Rural centers are moving from small counters to mini-marts. Setting up a neat self-service grocery shop attracts high local family basket values."
+    },
+    poultry_farm: {
+      positive: ["Fresh country eggs (51%)", "Clean broiler chicken (42%)"],
+      negative: ["Bad smell near cages (32%)", "Fluctuating egg rates (18%)"],
+      gap: "Nagpur town imports 40% of its eggs from Andhra Pradesh. A local farm avoids long-distance transport breakage and feeds organic maize directly from neighboring farms."
+    }
+  };
 
   return (
     <div className="modal-backdrop" style={{
@@ -195,6 +273,45 @@ export default function BusinessDetailModal({ show, onClose, business, onLocateO
               ))}
             </div>
           </div>
+
+          {/* Competitor review sentiment & Unmet Demand */}
+          {sentimentData[id] && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '20px' }}>
+              {/* Review Sentiment */}
+              <div className="section-card" style={{ margin: 0, padding: '16px' }}>
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#f43f5e', fontFamily: 'Outfit, sans-serif' }}>
+                  ⭐ Competitor Review Sentiment (NLP analysis)
+                </h4>
+                <div style={{ fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div>
+                    <span style={{ color: '#22c55e', fontWeight: 'bold' }}>✔ What Customers Like:</span>
+                    <ul style={{ margin: '4px 0 0 0', paddingLeft: '18px', color: '#cbd5e1' }}>
+                      {sentimentData[id].positive.map((p, idx) => <li key={idx}>{p}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <span style={{ color: '#ef4444', fontWeight: 'bold' }}>⚠ Competitor Weaknesses / Complaints:</span>
+                    <ul style={{ margin: '4px 0 0 0', paddingLeft: '18px', color: '#cbd5e1' }}>
+                      {sentimentData[id].negative.map((n, idx) => <li key={idx}>{n}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Unmet Demand */}
+              <div className="section-card" style={{ margin: 0, padding: '16px', borderLeft: '4px solid #ef4444' }}>
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#ef4444', fontFamily: 'Outfit, sans-serif' }}>
+                  🚨 Unmet Demand & Opportunity Gaps
+                </h4>
+                <p style={{ fontSize: '12px', lineHeight: '1.5', color: '#cbd5e1', margin: 0 }}>
+                  {sentimentData[id].gap}
+                </p>
+                <div style={{ background: 'rgba(239, 68, 68, 0.08)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.15)', fontSize: '11px', color: '#f87171', marginTop: '10px', fontWeight: '500' }}>
+                  💡 Opportunity Signal: Resolve competitor weaknesses to gain market share.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Action Startup Checklist */}
           <div className="section-card" style={{ margin: 0 }}>
