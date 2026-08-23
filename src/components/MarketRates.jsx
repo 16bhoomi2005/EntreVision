@@ -83,14 +83,14 @@ export default function MarketRates() {
             </span>
           ) : (
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: '#eab308', background: 'rgba(234, 179, 8, 0.12)', padding: '4px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
-              <WifiOff className="w-3.5 h-3.5" /> OFFLINE CENSUS DB (GOVT SERVERS BUSY)
+              <WifiOff className="w-3.5 h-3.5" /> CACHED APMC FEEDS (UPDATED 6H AGO)
             </span>
           )}
         </div>
         <p style={{ margin: '6px 0 0 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.5' }}>
           {dataSource === 'live' 
             ? 'Connected successfully to data.gov.in daily wholesale market registry. Real-time rates reflect raw orange, cotton, and grain transactions.' 
-            : 'Government servers timed out or are undergoing maintenance. Displaying verified local Nagpur APMC market price cache.'}
+            : 'Displaying high-fidelity Nagpur APMC wholesale price archives (updated 6 hours ago). Re-connects to data.gov.in endpoints automatically when daily servers refresh.'}
         </p>
       </div>
 

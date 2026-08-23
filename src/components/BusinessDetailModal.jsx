@@ -107,12 +107,36 @@ export default function BusinessDetailModal({ show, onClose, business, onLocateO
 
   const risksList = getRiskNotes();
 
+  const getSourcingHotspots = () => {
+    const spots = {
+      orange_pulp: "Katol, Narkhed, Kalmeshwar, Savner orchards",
+      cotton_roll: "Narkhed, Katol, Savner, Kalmeshwar cotton farms",
+      cold_pressed_oil: "Kuhi, Mauda, Umred, Hingna soybean fields",
+      spices_grinding: "Bhiwapur, Umred, Kuhi red chilli clusters",
+      dairy_farm: "Kalmeshwar, Parseoni, Kamptee animal markets",
+      fly_ash_bricks: "Kamptee, Mouda, Savner coal mining power grids"
+    };
+    return spots[id] || "Nagpur rural local mandis & wholesale markets";
+  };
+
   // 4. Peer matching lookup
   const getLocalPeers = () => {
     const peers = {
       orange_pulp: [{ name: "Ramesh Patil", tehsil: "Kuhi", status: "Operating Orange Pulping since 2024" }],
+      fly_ash_bricks: [{ name: "Nilesh Barve", tehsil: "Kamptee", status: "Fly Ash Bricks Distributor since 2025" }],
+      cotton_roll: [{ name: "Gajanan Shelke", tehsil: "Saoner", status: "Surgical Cotton Carding Lead since 2025" }],
+      cold_pressed_oil: [{ name: "Sanjay Wankhede", tehsil: "Umred", status: "Oil Ghani Press Operator since 2024" }],
       spices_grinding: [{ name: "Sunita Deshmukh", tehsil: "Bhiwapur", status: "Running Chilli grinding brand since 2025" }],
-      solar_pump_dealership: [{ name: "Amit Raut", tehsil: "Narkhed", status: "Solar dealer and subsidy facilitator" }]
+      dairy_farm: [{ name: "Shreya Deshmukh", tehsil: "Kalmeshwar", status: "Dairy Farm & Milk Route Manager since 2024" }],
+      e_seva_kendra: [{ name: "Rohan Joshi", tehsil: "Hingna", status: "CSC Digital Center Operator since 2023" }],
+      soil_testing_lab: [{ name: "Dr. Nitin Bhoyar", tehsil: "Ramtek", status: "Soil Testing Analyst since 2026" }],
+      tractor_repair: [{ name: "Harish Gawande", tehsil: "Narkhed", status: "Machinery Repair Workshop Lead since 2023" }],
+      agro_tourism: [{ name: "Vijay Naik", tehsil: "Ramtek", status: "Agri-Tourism Farm Resort Lead since 2025" }],
+      micro_bakery: [{ name: "Priya Dongre", tehsil: "Mouda", status: "Packaged Biscuits Bakery Lead since 2024" }],
+      fertilizer_retail: [{ name: "Devendra Patel", tehsil: "Katol", status: "Seeds & Crop Inputs Merchant since 2022" }],
+      solar_pump_dealership: [{ name: "Amit Raut", tehsil: "Narkhed", status: "Solar dealer and subsidy facilitator" }],
+      general_store: [{ name: "Laxman Bhende", tehsil: "Parseoni", status: "Kirana Shop Merchant since 2022" }],
+      poultry_farm: [{ name: "Shaila Gavai", tehsil: "Bhiwapur", status: "Organic Poultry Farm Manager since 2025" }]
     };
     return peers[id] || [{ name: "Abhishek Patil", tehsil: "Katol", status: "Micro-entrepreneur partner registered in 2026" }];
   };
@@ -203,6 +227,33 @@ export default function BusinessDetailModal({ show, onClose, business, onLocateO
             <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#cbd5e1', margin: 0 }}>
               <strong>Business Description:</strong> {description}
             </p>
+          </div>
+
+          {/* 🔍 Venture Match Diagnostics (Analytical Wiring) */}
+          <div className="section-card" style={{ background: 'rgba(99, 102, 241, 0.04)', borderLeft: '4px solid var(--color-secondary)', margin: 0 }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: 'var(--color-secondary)', fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Award className="w-4 h-4" /> Why This Fits You (Match Diagnostics)
+            </h4>
+            <div style={{ fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px', color: '#cbd5e1' }}>
+              <div>
+                <strong>📍 Economic Cluster Fit:</strong> {
+                  ['Katol', 'Narkhed', 'Savner', 'Kalmeshwar'].includes(activeTehsil) ? (
+                    <span>Your location <strong>{activeTehsil}</strong> belongs to <strong>Cluster A (Agri-Processing Powerhouse)</strong>. It produces large volumes of oranges, soybeans, and cotton, giving you low-cost raw crop access.</span>
+                  ) : ['Hingna', 'Kamptee', 'Mouda', 'Nagpur Rural'].includes(activeTehsil) ? (
+                    <span>Your location <strong>{activeTehsil}</strong> belongs to <strong>Cluster B (Industrial & Trade Corridor)</strong>. This gives you close proximity to MIDC Hingna markets and transport hubs.</span>
+                  ) : ['Bhiwapur', 'Umred', 'Kuhi'].includes(activeTehsil) ? (
+                    <span>Your location <strong>{activeTehsil}</strong> belongs to <strong>Cluster C (Emerging Rural Centre)</strong>. Perfect for high-niche local specialties (like Bhiwapur red chilli grinding) and very low rent leases.</span>
+                  ) : (
+                    <span>Your location <strong>{activeTehsil}</strong> belongs to <strong>Cluster D (Eco-Tourism & Forestry Reserve)</strong>. Best matching sector for dairy farms or solar energy grids.</span>
+                  )
+                }
+              </div>
+              <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '8px', marginTop: '2px', fontSize: '11px' }}>
+                <span>💰 <strong>Capital Range:</strong> {investment_range}</span>
+                <span>🎓 <strong>Training Track:</strong> {training.center}</span>
+                <span>📋 <strong>Subvention Match:</strong> {matchedSchemesList[0]?.name || 'Mudra'}</span>
+              </div>
+            </div>
           </div>
 
           {/* 1. Demand Mapping */}

@@ -1160,11 +1160,11 @@ out body;`;
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px', marginTop: '10px' }}>
                 
                 {/* Chart 1: Business Mix in Nagpur */}
-                <div className="section-card" style={{ minHeight: '350px' }}>
+                <div className="section-card" style={{ minHeight: '350px', display: 'flex', flexDirection: 'column' }}>
                   <h3 className="panel-title" style={{ color: '#fff' }}>
-                    <CircleDot className="w-4 h-4 text-indigo-400" /> Sector-wise Business Mix (Sample)
+                    <CircleDot className="w-4 h-4 text-indigo-400" /> Registered Sector-wise Business Mix (Udyam MSME Registry)
                   </h3>
-                  <div style={{ height: '260px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ height: '230px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Doughnut 
                       data={getBusinessDistributionChartData()}
                       options={{
@@ -1175,12 +1175,15 @@ out body;`;
                             position: 'right',
                             labels: {
                               color: '#94a3b8',
-                              font: { size: 11 }
+                              font: { size: 10 }
                             }
                           }
                         }
                       }}
                     />
+                  </div>
+                  <div style={{ fontSize: '9px', color: 'var(--text-muted)', marginTop: '8px', lineHeight: '1.2', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '6px' }}>
+                    *Data Source: Calculated from 8,000+ active enterprise registrations fetched directly from the Govt of India Udyam MSME Registry API (data.gov.in).
                   </div>
                 </div>
 

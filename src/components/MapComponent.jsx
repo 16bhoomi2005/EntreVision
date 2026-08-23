@@ -153,6 +153,7 @@ export default function MapComponent({
             <span>${selectedSector} Competitors:</span>
             <strong>${competitorCount}</strong>
           </div>
+          ${competitorCount === 0 ? `<div style="font-size: 8px; color: #eab308; margin-top: 2px; line-height: 1.2;">*Note: No active MSME registries or OSM tags recorded in this sector for ${tehName}. Ideal market entry opportunity.</div>` : ''}
         </div>
       </div>
     `;
