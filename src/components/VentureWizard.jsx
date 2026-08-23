@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, ArrowLeft, RefreshCw, Landmark, Shield, HelpCircle } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, RefreshCw, Landmark, Shield, HelpCircle, Layers } from 'lucide-react';
 import businessArchetypes from '../data/business_archetypes.json';
 
 export default function VentureWizard({ onSelectBusiness }) {
@@ -9,7 +9,10 @@ export default function VentureWizard({ onSelectBusiness }) {
     capital: 'medium',
     space: 'medium',
     risk: 'medium',
-    strength: 'Trading'
+    strength: 'Trading',
+    tehsil: 'Katol',
+    customerReach: 'Local Mandi',
+    motivation: 'Waste Synergy'
   });
   const [results, setResults] = useState([]);
 
@@ -18,7 +21,7 @@ export default function VentureWizard({ onSelectBusiness }) {
   };
 
   const handleNext = () => {
-    if (step < 5) {
+    if (step < 8) {
       setStep(step + 1);
     } else {
       calculateMatches();
@@ -30,13 +33,13 @@ export default function VentureWizard({ onSelectBusiness }) {
   };
 
   const calculateMatches = () => {
-    // Suitability calculations based on user persona criteria
+    // Suitability calculations using multi-criteria classification model
     const scoredList = businessArchetypes.map(archetype => {
-      let score = 50; // Starting baseline
+      let score = 40; // Starting baseline
 
       // 1. Sector Alignment
       if (answers.sector === 'Any' || archetype.sector === answers.sector) {
-        score += 20;
+        score += 15;
       }
 
       // 2. Capital Budget Alignment
@@ -63,7 +66,7 @@ export default function VentureWizard({ onSelectBusiness }) {
       if (archetype.risk === answers.risk) {
         score += 5;
       } else {
-        score -= 5;
+        score -= 2;
       }
 
       // 5. Strength / Skills Synergy Heuristics
@@ -78,8 +81,62 @@ export default function VentureWizard({ onSelectBusiness }) {
         score += 10;
       }
 
-      // Cap score between 30% and 99%
-      const finalPercent = Math.max(30, Math.min(99, score));
+      // 6. Block-Level Agronomy/Resource Synergy (DSER Nagpur Statistics)
+      const selectedBlock = answers.tehsil;
+      if (archetype.id === 'orange_pulp') {
+        if (['Katol', 'Narkhed', 'Savner', 'Kalmeshwar'].includes(selectedBlock)) {
+          score += 25; // Massive citrus belt match
+        }
+      } else if (archetype.id === 'cold_pressed_oil') {
+        if (['Kuhi', 'Mauda', 'Umred', 'Hingna'].includes(selectedBlock)) {
+          score += 25; // Large soybean yield fields
+        }
+      } else if (archetype.id === 'cotton_roll') {
+        if (['Narkhed', 'Savner', 'Katol', 'Kalmeshwar'].includes(selectedBlock)) {
+          score += 25; // Black cotton soil cropping
+        }
+      } else if (archetype.id === 'spices_grinding') {
+        if (selectedBlock === 'Bhiwapur') {
+          score += 35; // Bhiwapur famous red chillies
+        } else if (['Umred', 'Kuhi'].includes(selectedBlock)) {
+          score += 20;
+        }
+      } else if (archetype.sector === 'Agriculture & Livestock') {
+        if (['Ramtek', 'Parseoni', 'Kamptee'].includes(selectedBlock)) {
+          score += 15; // Water rich / livestock zones
+        }
+      } else if (archetype.id === 'fly_ash_bricks') {
+        if (['Kamptee', 'Mauda', 'Savner'].includes(selectedBlock)) {
+          score += 25; // Fly ash proximity to power plants/mines
+        }
+      }
+
+      // 7. Customer Reach Alignment
+      const distributionChannels = {
+        'Local Mandi': ['Agriculture & Livestock', 'Manufacturing'],
+        'Weekly Haat / Bazaar': ['Retail & Trade', 'Food & Hospitality'],
+        'Urban Wholesalers': ['Manufacturing', 'Agriculture & Livestock'],
+        'Urban Retail / Digital': ['IT & Services', 'Food & Hospitality', 'Retail & Trade']
+      };
+      const matchingChannels = distributionChannels[answers.customerReach] || [];
+      if (matchingChannels.includes(archetype.sector)) {
+        score += 10;
+      }
+
+      // 8. Motivation Alignment
+      const motivations = {
+        'Daily Cash Flow': ['Retail & Trade', 'Food & Hospitality'],
+        'Long-term Family Employment': ['Agriculture & Livestock', 'Retail & Trade'],
+        'Waste Synergy': ['Manufacturing', 'Agriculture & Livestock'],
+        'Export Oriented': ['Manufacturing']
+      };
+      const matchingMotivations = motivations[answers.motivation] || [];
+      if (matchingMotivations.includes(archetype.sector)) {
+        score += 10;
+      }
+
+      // Cap score between 35% and 99%
+      const finalPercent = Math.max(35, Math.min(99, score));
 
       return {
         ...archetype,
@@ -90,7 +147,7 @@ export default function VentureWizard({ onSelectBusiness }) {
     // Sort descending by match percentage
     const sorted = scoredList.sort((a, b) => b.matchPercent - a.matchPercent);
     setResults(sorted);
-    setStep(6); // Move to results view
+    setStep(9); // Move to results view
   };
 
   const resetWizard = () => {
@@ -101,7 +158,10 @@ export default function VentureWizard({ onSelectBusiness }) {
       capital: 'medium',
       space: 'medium',
       risk: 'medium',
-      strength: 'Trading'
+      strength: 'Trading',
+      tehsil: 'Katol',
+      customerReach: 'Local Mandi',
+      motivation: 'Waste Synergy'
     });
   };
 
@@ -135,17 +195,32 @@ export default function VentureWizard({ onSelectBusiness }) {
     { key: 'medium', label: 'Medium Risk (Balanced returns)' },
     { key: 'high', label: 'High Risk (Higher growth potential)' }
   ];
+  const blocks = ['Katol', 'Narkhed', 'Savner', 'Kalmeshwar', 'Hingna', 'Bhiwapur', 'Umred', 'Kuhi', 'Ramtek', 'Parseoni', 'Mauda', 'Kamptee', 'Nagpur (Rural)'];
+  
+  const reaches = [
+    { key: 'Local Mandi', label: '🌾 APMC Market Yards & Local Grain Mandis' },
+    { key: 'Weekly Haat / Bazaar', label: '🛒 Weekly Village Bazaars (Athavadi Bazar)' },
+    { key: 'Urban Wholesalers', label: '🏢 Bulk Wholesalers in Nagpur City (Kalamna)' },
+    { key: 'Urban Retail / Digital', label: '📱 Door-to-Door & Direct Retail Buyers' }
+  ];
+
+  const motivations = [
+    { key: 'Daily Cash Flow', label: '💵 Maintain Daily Liquid Cash Flow' },
+    { key: 'Long-term Family Employment', label: '🏡 Stable Job Creation for Family Members' },
+    { key: 'Waste Synergy', label: '♻️ Utilize Agricultural Crop Waste / Byproducts' },
+    { key: 'Export Oriented', label: '✈️ Supply high-quality packaged goods outwards' }
+  ];
 
   return (
     <div className="section-card" style={{ maxWidth: '680px', margin: '0 auto', background: 'rgba(30, 41, 59, 0.5)' }}>
-      {step < 6 && (
+      {step < 9 && (
         <div>
           {/* Progress bar */}
           <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', marginBottom: '20px' }}>
-            <div style={{ width: `${(step / 5) * 100}%`, height: '100%', background: 'var(--color-secondary)', transition: 'width 0.3s ease', borderRadius: '2px' }}></div>
+            <div style={{ width: `${(step / 8) * 100}%`, height: '100%', background: 'var(--color-secondary)', transition: 'width 0.3s ease', borderRadius: '2px' }}></div>
           </div>
 
-          <span className="input-label" style={{ fontSize: '11px', color: 'var(--color-secondary)' }}>Venture Matcher — Step {step} of 5</span>
+          <span className="input-label" style={{ fontSize: '11px', color: 'var(--color-secondary)' }}>Venture Diagnostic Matcher — Step {step} of 8</span>
         </div>
       )}
 
@@ -254,8 +329,71 @@ export default function VentureWizard({ onSelectBusiness }) {
         </div>
       )}
 
+      {/* Step 6: Target Block/Taluka */}
+      {step === 6 && (
+        <div style={{ marginTop: '10px' }}>
+          <h3 style={{ margin: '0 0 8px 0', fontFamily: 'Outfit, sans-serif', color: '#fff' }}>Which block (Taluka) in Nagpur is your target location?</h3>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>We query block-level yields dynamically to recommend businesses with high resource synergy.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '8px' }}>
+            {blocks.map(b => (
+              <button
+                key={b}
+                type="button"
+                className={`nav-tab ${answers.tehsil === b ? 'active' : ''}`}
+                style={{ textAlign: 'center', padding: '10px 4px', margin: 0, border: '1px solid rgba(255,255,255,0.06)' }}
+                onClick={() => handleSelectOption('tehsil', b)}
+              >
+                {b}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 7: Reach/Channels */}
+      {step === 7 && (
+        <div style={{ marginTop: '10px' }}>
+          <h3 style={{ margin: '0 0 8px 0', fontFamily: 'Outfit, sans-serif', color: '#fff' }}>Who is your target customer base?</h3>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>Decides the primary distribution channels and logistics for your setup.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+            {reaches.map(rc => (
+              <button
+                key={rc.key}
+                type="button"
+                className={`nav-tab ${answers.customerReach === rc.key ? 'active' : ''}`}
+                style={{ textAlign: 'left', padding: '14px 16px', margin: 0, border: '1px solid rgba(255,255,255,0.06)', width: '100%' }}
+                onClick={() => handleSelectOption('customerReach', rc.key)}
+              >
+                {rc.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 8: Motivation */}
+      {step === 8 && (
+        <div style={{ marginTop: '10px' }}>
+          <h3 style={{ margin: '0 0 8px 0', fontFamily: 'Outfit, sans-serif', color: '#fff' }}>What is the primary motivation for this business?</h3>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>Aligns the opportunity recommendation with your underlying entrepreneurship goals.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+            {motivations.map(m => (
+              <button
+                key={m.key}
+                type="button"
+                className={`nav-tab ${answers.motivation === m.key ? 'active' : ''}`}
+                style={{ textAlign: 'left', padding: '14px 16px', margin: 0, border: '1px solid rgba(255,255,255,0.06)', width: '100%' }}
+                onClick={() => handleSelectOption('motivation', m.key)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Step Buttons */}
-      {step < 6 && (
+      {step < 9 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
           <button
             type="button"
@@ -275,18 +413,18 @@ export default function VentureWizard({ onSelectBusiness }) {
             }}
             onClick={handleNext}
           >
-            {step === 5 ? 'Find My Business Matches' : 'Continue'} <ArrowRight className="w-4 h-4" />
+            {step === 8 ? 'Find My Business Matches' : 'Continue'} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Step 6: Results Match Panel */}
-      {step === 6 && (
+      {/* Step 9: Results Match Panel */}
+      {step === 9 && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div>
               <h3 style={{ margin: '0 0 4px 0', fontFamily: 'Outfit, sans-serif', color: '#fff' }}>Recommended Businesses for You</h3>
-              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Top matches based on real Nagpur district demand and resource clusters.</p>
+              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Top matches calculated based on Nagpur district yield statistics and block synergies.</p>
             </div>
             <button
               type="button"
@@ -334,7 +472,7 @@ export default function VentureWizard({ onSelectBusiness }) {
                   fontSize: '12px', color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px' 
                 }}>
                   <div>
-                    Investment Need: <strong style={{ color: '#fff' }}>You'll need {match.investment_range} to start</strong>
+                    Investment Need: <strong style={{ color: '#fff' }}>You\'ll need {match.investment_range} to start</strong>
                   </div>
                   <div>
                     Monthly Profit: <strong style={{ color: '#22c55e' }}>You can earn about {match.monthly_profit_est} per month</strong>
