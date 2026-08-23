@@ -1198,6 +1198,7 @@ export default function App() {
         onClose={() => setShowDetailModal(false)}
         business={selectedBusiness}
         onLocateOnMap={handleLocateSectorOnMap}
+        selectedTehsil={selectedTehsil}
       />
     </div>
   );
