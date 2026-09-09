@@ -20,7 +20,8 @@ import {
   Sliders,
   Folder,
   LogOut,
-  User
+  User,
+  Mic
 } from 'lucide-react';
 
 import MapComponent from './components/MapComponent';
@@ -90,6 +91,24 @@ export default function App() {
 
   const [liveAmenities, setLiveAmenities] = useState({ schools: null, colleges: null, hospitals: null, transport: null });
   const [loadingAmenities, setLoadingAmenities] = useState(false);
+
+  const renderSignInPrompt = (featureName) => (
+    <div className="info-alert" style={{ maxWidth: '560px', margin: '48px auto', textAlign: 'center' }}>
+      <User className="w-6 h-6 text-indigo-400" style={{ marginBottom: '10px' }} />
+      <h2 style={{ color: '#fff', fontSize: '18px', margin: '0 0 8px' }}>{featureName} requires an account</h2>
+      <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: '0 0 16px' }}>
+        Sign in or create a free account to access this feature.
+      </p>
+      <button
+        type="button"
+        className="btn-primary"
+        style={{ width: 'auto', padding: '9px 18px', margin: 0 }}
+        onClick={() => setAuthModalOpen(true)}
+      >
+        Sign In / Create Account
+      </button>
+    </div>
+  );
 
   const tehsilCoords = {
     Katol: { lat: 21.27, lon: 78.58 },
@@ -826,7 +845,7 @@ export default function App() {
                 }}
                 onClick={() => setAuthModalOpen(true)}
               >
-                Sign In
+                Sign In / Create Account
               </button>
             )}
           </div>
@@ -862,6 +881,16 @@ export default function App() {
                     onClick={() => setActiveTab('khoj')}
                   >
                     <Sparkles className="w-5 h-5 text-white" /> Start Venture Khoj (Match My Savings)
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    aria-label="Ask the AI advisor by voice"
+                    title="Ask the AI advisor by voice"
+                    style={{ width: 'auto', padding: '14px 16px', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.45)', color: '#fff', borderRadius: '6px', cursor: 'pointer' }}
+                    onClick={() => user ? setActiveTab('advisor') : setAuthModalOpen(true)}
+                  >
+                    <Mic className="w-5 h-5" />
                   </button>
                 </div>
                 <div style={{ marginTop: '16px', fontSize: '11px', color: 'var(--text-muted)' }}>
@@ -974,7 +1003,7 @@ export default function App() {
         {activeTab === 'schemes' && (
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '32px', overflowY: 'auto' }}>
-              <SchemesDirectory />
+              {user ? <SchemesDirectory /> : renderSignInPrompt('Loans & Subsidies Directory')}
             </div>
           </div>
         )}
@@ -1069,7 +1098,7 @@ export default function App() {
         {activeTab === 'advisor' && (
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '32px', overflowY: 'auto' }}>
-              <AIBusinessAdvisor />
+              {user ? <AIBusinessAdvisor /> : renderSignInPrompt('AI Hyper-Local Advisor')}
             </div>
           </div>
         )}
@@ -1314,7 +1343,7 @@ export default function App() {
         {activeTab === 'compare' && (
           <div className="viewport-content" style={{ gridTemplateColumns: '1fr' }}>
             <div style={{ padding: '32px', overflowY: 'auto' }}>
-              <TehsilComparison nagpurData={nagpurData} />
+              {user ? <TehsilComparison nagpurData={nagpurData} /> : renderSignInPrompt('Compare Tehsils')}
             </div>
           </div>
         )}

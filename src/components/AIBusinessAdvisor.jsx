@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, User, Info, MessageSquare, MapPin, Building2, Wheat, Store } from 'lucide-react';
+import { Send, Sparkles, User, Info, MessageSquare, MapPin, Building2, Wheat, Store, Mic, MicOff, PlayCircle } from 'lucide-react';
 import businessArchetypes from '../data/business_archetypes.json';
 import nagpurData from '../data/nagpur_data.json';
 
@@ -20,7 +20,88 @@ export default function AIBusinessAdvisor() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [voiceLanguage, setVoiceLanguage] = useState('en-IN');
+  const [isListening, setIsListening] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState('');
+  const [lastQuery, setLastQuery] = useState('');
   const chatEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const stopRequestedRef = useRef(false);
+  const recognitionFailedRef = useRef(false);
+  const receivedVoiceResultRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.stop();
+    };
+  }, []);
+
+  const handleVoiceInput = () => {
+    if (isListening) {
+      stopRequestedRef.current = true;
+      recognitionRef.current?.stop();
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setVoiceStatus('Voice input is not supported in this browser.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = voiceLanguage;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
+    stopRequestedRef.current = false;
+    recognitionFailedRef.current = false;
+    receivedVoiceResultRef.current = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setVoiceStatus('Listening...');
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.trim();
+      if (transcript) {
+        receivedVoiceResultRef.current = true;
+        setInputValue((currentValue) => currentValue ? `${currentValue} ${transcript}` : transcript);
+        setVoiceStatus('Voice input added. You can edit it before sending.');
+      }
+    };
+
+    recognition.onerror = (event) => {
+      recognitionFailedRef.current = true;
+      const messages = {
+        'not-allowed': 'Microphone permission denied.',
+        'service-not-allowed': 'Microphone permission denied.',
+        'no-speech': 'No speech detected. Please try again.',
+        'audio-capture': 'No microphone was found.',
+        'language-not-supported': 'The selected language is not supported in this browser.'
+      };
+      setVoiceStatus(messages[event.error] || 'Voice recognition could not complete. Please try again.');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+      if (stopRequestedRef.current) {
+        setVoiceStatus('Voice input stopped.');
+      } else if (!recognitionFailedRef.current && !receivedVoiceResultRef.current) {
+        setVoiceStatus('Voice input stopped.');
+      }
+      stopRequestedRef.current = false;
+    };
+
+    try {
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+      setVoiceStatus('Voice recognition could not start. Please try again.');
+    }
+  };
 
   // Retrieve hyper-local context for selected tehsil
   const tehsilDetails = nagpurData.tehsil_details[selectedTehsil] || {};
@@ -52,6 +133,7 @@ export default function AIBusinessAdvisor() {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     setMessages((prev) => [...prev, userMsg]);
+    setLastQuery(text);
     setInputValue('');
     setIsTyping(true);
 
@@ -68,9 +150,25 @@ export default function AIBusinessAdvisor() {
     }, 1000);
   };
 
+  const openYouTubeGuide = () => {
+    const query = lastQuery.toLowerCase();
+    let videoSearch = `${lastQuery} business guide Nagpur`;
+
+    if (query.includes('संत्र') || query.includes('orange')) {
+      videoSearch = 'संत्रा प्रक्रिया व्यवसाय मराठी orange processing business Marathi';
+    } else if (query.includes('जेवण') || query.includes('स्वयंपाक') || query.includes('tiffin') || query.includes('catering')) {
+      videoSearch = 'घरगुती टिफिन व्यवसाय मराठी home tiffin business Marathi';
+    } else if (query.includes('subsidy') || query.includes('pmegp') || query.includes('pmfme') || query.includes('योजना')) {
+      videoSearch = 'PMEGP PMFME योजना अर्ज प्रक्रिया मराठी';
+    }
+
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(videoSearch)}`, '_blank', 'noopener,noreferrer');
+  };
+
   // AI Hyper-Local Query Processor (Spatial-RAG logic)
   const processHyperLocalQuery = (query, currentTehsil) => {
     const q = query.toLowerCase();
+    const isMarathi = /[\u0900-\u097F]/.test(query);
 
     // Check if user mentioned a specific tehsil in prompt, else fallback to currentTehsil
     let targetTehsil = currentTehsil;
@@ -85,6 +183,34 @@ export default function AIBusinessAdvisor() {
     const tCrops = tDetails.crop_mineral_production || {};
     const tRent = tDetails.avg_rent_sqft || 15;
     const tComp = tDetails.competitor_count || 120;
+
+    // Marathi cooking and orange-processing questions
+    if (isMarathi && (q.includes('जेवण') || q.includes('स्वयंपाक') || q.includes('खाण') || q.includes('कुकिंग'))) {
+      return `🍲 **${targetTehsil} साठी तुमच्या स्वयंपाक कौशल्यावर आधारित व्यवसाय कल्पना**:
+• **घरगुती टिफिन सेवा**: कार्यालये, दुकाने आणि विद्यार्थ्यांसाठी रोजचे जेवण तयार करा.
+• **नाश्ता व केटरिंग**: पोहे, उपमा, भजी, पुरणपोळी किंवा सण-समारंभांसाठी ऑर्डर घ्या.
+• **स्थानिक पदार्थांचे पॅकिंग**: मसाले, लोणची, पापड किंवा तयार स्नॅक्स विकू शकता.
+• **सुरुवात कशी कराल**: प्रथम 10–15 नियमित ग्राहकांपासून सुरुवात करा आणि WhatsApp/स्थानिक दुकानदारांमार्फत ऑर्डर घ्या.
+
+${targetTehsil} मध्ये सरासरी व्यावसायिक भाडे ₹${tRent}/sq.ft. आहे; त्यामुळे कमी खर्चात घरातून सुरुवात करणे हा चांगला पर्याय आहे. खाद्य-प्रक्रिया उपक्रमासाठी PMFME अंतर्गत 35% पर्यंतची मदत उपलब्ध असू शकते.`;
+    }
+
+    if (isMarathi && q.includes('संत्र')) {
+      return `🍊 **${targetTehsil} मधील संत्र्यांपासून करता येणारे व्यवसाय**:
+• **संत्र्याचा रस व स्क्वॅश**: ताजा रस, स्क्वॅश किंवा सिरप स्थानिक बाजारात विकू शकता.
+• **जॅम, मुरंबा व कँडी**: जास्त पिकलेली किंवा आकाराने लहान संत्री मूल्यवर्धित पदार्थांसाठी वापरा.
+• **संत्रा पल्प/प्युरी**: हॉटेल, बेकरी आणि आईस्क्रीम विक्रेत्यांना पुरवठा करता येतो.
+• **सुकवलेली साल व झेस्ट**: बेकरी, मसाले आणि सुगंधी उत्पादनांसाठी छोट्या प्रमाणात विक्री करता येते.
+
+${targetTehsil} हा संत्रा उत्पादनाचा परिसर आहे. आधी लहान प्रमाणात रस किंवा मुरंब्यापासून सुरुवात करा, खर्च व विक्री नोंदवा, आणि नंतर पल्प प्रक्रिया किंवा थंड साठवणुकीकडे वाढवा. PMFME योजनेत पात्र खाद्य-प्रक्रिया युनिटसाठी 35% पर्यंतची भांडवली मदत मिळू शकते.`;
+    }
+
+    if (isMarathi && (q.includes('व्यवसाय') || q.includes('धंदा') || q.includes('सुरू') || q.includes('करू शकते') || q.includes('करू शकतो'))) {
+      return `💡 **${targetTehsil} साठी व्यवसाय मार्गदर्शन**:
+तुमच्या कौशल्य, उपलब्ध भांडवल आणि स्थानिक कच्चा मालानुसार छोट्या प्रमाणात सुरुवात करणे योग्य राहील. ${targetTehsil} मध्ये संत्री, धान, कापूस आणि सोयाबीन उपलब्ध आहेत.
+
+तुम्ही खाद्यपदार्थ बनवत असाल तर टिफिन, नाश्ता, केटरिंग, लोणची/मसाले किंवा संत्र्याचे मूल्यवर्धित पदार्थ हे चांगले पर्याय आहेत. तुमचे भांडवल, जागा आणि आवड सांगा; मी अधिक योग्य पर्याय सुचवेन.`;
+    }
 
     // 1. Best business in target tehsil
     if (q.includes('best business') || q.includes('suggest') || q.includes('idea') || q.includes('start')) {
@@ -324,6 +450,28 @@ For maximum financial viability, we recommend choosing an agro-processing or tra
               onChange={(e) => setInputValue(e.target.value)}
               style={{ flex: 1, margin: 0, fontSize: '12px' }}
             />
+            <select
+              aria-label="Voice input language"
+              className="select-input"
+              value={voiceLanguage}
+              onChange={(e) => setVoiceLanguage(e.target.value)}
+              disabled={isListening}
+              style={{ width: 'auto', minWidth: '76px', margin: 0, padding: '0 6px', fontSize: '11px' }}
+            >
+              <option value="en-IN">English</option>
+              <option value="hi-IN">हिन्दी</option>
+              <option value="mr-IN">मराठी</option>
+            </select>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleVoiceInput}
+              aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+              title={isListening ? 'Stop voice input' : 'Start voice input'}
+              style={{ background: isListening ? '#dc2626' : 'var(--color-primary)', border: 'none', color: '#fff', borderRadius: '6px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </button>
             <button 
               type="submit" 
               className="btn-primary" 
@@ -332,11 +480,26 @@ For maximum financial viability, we recommend choosing an agro-processing or tra
               <Send className="w-4 h-4" />
             </button>
           </form>
+          {voiceStatus && (
+            <div role="status" style={{ marginTop: '6px', fontSize: '10px', color: isListening ? '#22c55e' : 'var(--text-muted)' }}>
+              {voiceStatus}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Suggested Prompts Pill Container */}
       <div>
+        {lastQuery && (
+          <button
+            type="button"
+            className="nav-tab"
+            onClick={openYouTubeGuide}
+            style={{ margin: '0 0 14px 0', padding: '7px 11px', display: 'flex', alignItems: 'center', gap: '6px', color: '#67e8f9' }}
+          >
+            <PlayCircle className="w-4 h-4" /> Watch a related guide on YouTube
+          </button>
+        )}
         <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
           💡 Recommended Hyper-Local Prompts for {selectedTehsil}:
         </span>
