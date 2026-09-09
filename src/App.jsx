@@ -572,14 +572,14 @@ export default function App() {
             className={`nav-tab ${activeTab === 'simulator' ? 'active' : ''}`}
             onClick={() => setActiveTab('simulator')}
           >
-            <Sliders className="w-4 h-4" /> Scenario Simulator
+            <Sliders className="w-4 h-4" /> Financial Structuring Assistant
           </button>
 
           <button 
             className={`nav-tab ${activeTab === 'advisor' ? 'active' : ''}`}
             onClick={() => setActiveTab('advisor')}
           >
-            <MessageSquare className="w-4 h-4" /> AI Business Advisor
+            <MessageSquare className="w-4 h-4" /> AI Hyper-Local Advisor
           </button>
 
           <button 
@@ -876,8 +876,8 @@ export default function App() {
                   
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('simulator')}>
                     <Sliders className="w-5 h-5 text-indigo-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Scenario Simulator</h4>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Simulate prices, setup fees, rent, and wages to calculate break-even sales.</p>
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>Financial Structuring Assistant</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>Auto-structure your capital stack (Equity vs PMEGP subsidies vs Bank loans), break-even targets, and loan DSCR.</p>
                   </div>
 
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('schemes')}>
@@ -906,8 +906,8 @@ export default function App() {
 
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('advisor')}>
                     <MessageSquare className="w-5 h-5 text-cyan-400" />
-                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>AI Business Advisor</h4>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}><strong>(Instant Automated Helper)</strong> Ask our RAG bot about local crop outputs, permit requirements, or startup tips.</p>
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '15px' }}>AI Hyper-Local Advisor</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}><strong>(Spatial-RAG Engine)</strong> Grounded in local crop yields, commercial lease rents, and competitor counts of all 14 blocks.</p>
                   </div>
 
                   <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', padding: '20px' }} onClick={() => setActiveTab('consultancy')}>

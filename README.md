@@ -98,9 +98,16 @@ The application separates concerns between rural citizens looking to start a sho
 
 ---
 
+## 📑 Project Documentation
+* **[Implementation Using IBM Bob](IMPLEMENTATION_IBM_BOB.md)**: Details on how IBM Bob was utilized as an AI-assisted development tool across Frontend, Backend, Database, ML, Scheme Matching, and API integration.
+* **[Data Pipeline & Methodology](DATAPIPELINE.md)**: Technical breakdown of the ETL ingestion, K-Means clustering, and MCDA suitability formula.
+
+---
+
 ## 🛠️ Tech Stack & Libraries
 *   **Core**: React, Vite
 *   **Map Rendering**: Leaflet, React-Leaflet
 *   **Charts**: Chart.js, React-Chartjs-2
 *   **Icons**: Lucide React
 *   **Data Compilation Pipeline**: Python (pandas, openpyxl)
+

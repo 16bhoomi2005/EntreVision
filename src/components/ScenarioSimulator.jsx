@@ -36,6 +36,12 @@ export default function ScenarioSimulator() {
   const [savedScenarios, setSavedScenarios] = useState([]);
   const [newScenarioName, setNewScenarioName] = useState('');
 
+  // Rural Financial Structuring & Debt Service (Bank-Readiness) State
+  const [subsidyScheme, setSubsidyScheme] = useState('pmegp_rural_special'); 
+  const [promoterEquityPct, setPromoterEquityPct] = useState(10); 
+  const [loanTenureYears, setLoanTenureYears] = useState(5);
+  const loanInterestRate = 9.5; // Standard Mudra/CGTMSE priority sector rate
+
   // Sync sliders when selecting a different business
   useEffect(() => {
     const defaults = defaultValues[selectedBizId];
@@ -73,6 +79,34 @@ export default function ScenarioSimulator() {
   
   const roiVal = netProfit > 0 ? (setup / netProfit).toFixed(1) : '99';
   const roiMonths = netProfit > 0 ? parseFloat(roiVal) : 99;
+
+  // Rural Financial Structuring Calculations
+  const workingCapitalReserve = Math.round(fixedCost * 3); // 3-month operating runway buffer
+  const totalProjectOutlay = setup + workingCapitalReserve;
+
+  const subsidyRateMap = {
+    pmegp_rural_special: 0.35, // 35% for SC/ST/OBC/Women/Minority in Rural areas
+    pmegp_rural_general: 0.25, // 25% for General category in Rural areas
+    pmfme: 0.35,               // 35% capital subsidy under PMFME (Food Processing)
+    none: 0.0
+  };
+  const subsidyRate = subsidyRateMap[subsidyScheme] ?? 0.35;
+  const rawSubsidy = Math.round(totalProjectOutlay * subsidyRate);
+  const subsidyAmount = subsidyScheme === 'pmfme' ? Math.min(1000000, rawSubsidy) : Math.min(1750000, rawSubsidy);
+
+  const promoterEquityAmount = Math.round(totalProjectOutlay * (promoterEquityPct / 100));
+  const bankLoanAmount = Math.max(0, totalProjectOutlay - promoterEquityAmount - subsidyAmount);
+
+  // Standard Monthly EMI calculation
+  const monthlyRate = (loanInterestRate / 12) / 100;
+  const totalMonths = loanTenureYears * 12;
+  const monthlyEMI = bankLoanAmount > 0 
+    ? Math.round((bankLoanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1))
+    : 0;
+
+  const netProfitAfterEMI = netProfit - monthlyEMI;
+  const dscr = monthlyEMI > 0 ? (netProfit / monthlyEMI).toFixed(2) : '99.0';
+  const dscrVal = parseFloat(dscr);
 
   // Set current as baseline
   const handleSetBaseline = () => {
@@ -182,7 +216,14 @@ export default function ScenarioSimulator() {
       {/* 1. Header Alert */}
       <div className="info-alert" style={{ borderLeftColor: '#6366f1' }}>
         <Sliders className="w-5 h-5 text-indigo-400" style={{ marginBottom: '6px' }} />
-        <strong>What-If Scenario Simulator:</strong> Slide inputs to simulate different cost scales (e.g. cheap shed vs proper shop) and discover which levers affect your bottom line the most.
+        <div>
+          <strong style={{ fontSize: '14px', color: '#fff', display: 'block' }}>
+            Financial Structuring Assistant for Rural Micro-Entrepreneurs & Scenario Simulator
+          </strong>
+          <span style={{ fontSize: '11px', color: '#cbd5e1' }}>
+            Auto-structure your project capital stack (promoter equity vs. government subsidies vs. bank loans), calculate daily break-even targets, and verify bank-loan debt service coverage (DSCR).
+          </span>
+        </div>
       </div>
 
       {/* 2. Narrative summary block (Priority 1) */}
@@ -408,6 +449,119 @@ export default function ScenarioSimulator() {
             </div>
           )}
 
+        </div>
+      </div>
+
+      {/* 4.5. Financial Structuring Assistant for Rural Micro-Entrepreneurs */}
+      <div className="section-card" style={{ border: '1px solid rgba(99, 102, 241, 0.3)', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+          <div>
+            <h3 className="panel-title" style={{ color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              🏛️ Financial Structuring Assistant (Capital Stack & Bank Readiness)
+            </h3>
+            <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#94a3b8' }}>
+              Auto-structure your project capital (Promoter Equity vs. Subsidy vs. Bank Loan), evaluate 3-month working capital runway, and compute bank debt service feasibility (DSCR).
+            </p>
+          </div>
+          
+          <div style={{ 
+            padding: '6px 12px', 
+            borderRadius: '20px', 
+            fontSize: '11px', 
+            fontWeight: 'bold', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px',
+            background: dscrVal >= 1.5 ? 'rgba(34, 197, 94, 0.15)' : dscrVal >= 1.15 ? 'rgba(234, 179, 8, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+            color: dscrVal >= 1.5 ? '#22c55e' : dscrVal >= 1.15 ? '#eab308' : '#ef4444',
+            border: `1px solid ${dscrVal >= 1.5 ? '#22c55e' : dscrVal >= 1.15 ? '#eab308' : '#ef4444'}`
+          }}>
+            <span>Bank Feasibility:</span>
+            <span>{dscrVal >= 1.5 ? '🟢 High Approval (DSCR ≥ 1.5)' : dscrVal >= 1.15 ? '🟡 Moderate (Collateral/Margin needed)' : '🔴 High Rejection Risk'}</span>
+          </div>
+        </div>
+
+        {/* Structuring Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <label className="input-label" style={{ fontSize: '11px' }}>Government Subsidy Scheme</label>
+            <select
+              className="select-input"
+              value={subsidyScheme}
+              onChange={(e) => setSubsidyScheme(e.target.value)}
+              style={{ margin: 0 }}
+            >
+              <option value="pmegp_rural_special">PMEGP Rural (Special: SC/ST/OBC/Women/Minority - 35%)</option>
+              <option value="pmegp_rural_general">PMEGP Rural (General Category - 25%)</option>
+              <option value="pmfme">PMFME (Food Processing Units - 35% up to ₹10L)</option>
+              <option value="none">Commercial Bank Financing Only (0% Subsidy)</option>
+            </select>
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1' }}>
+              <span>Promoter Own Equity Contribution</span>
+              <strong style={{ color: '#fff' }}>{promoterEquityPct}% (₹{promoterEquityAmount.toLocaleString()})</strong>
+            </div>
+            <input
+              type="range"
+              min="5"
+              max="35"
+              step="5"
+              value={promoterEquityPct}
+              onChange={(e) => setPromoterEquityPct(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: 'var(--color-secondary)', marginTop: '6px' }}
+            />
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1' }}>
+              <span>Bank Loan Tenure (Mudra / CGTMSE @ 9.5% p.a.)</span>
+              <strong style={{ color: '#fff' }}>{loanTenureYears} Years</strong>
+            </div>
+            <input
+              type="range"
+              min="3"
+              max="7"
+              step="1"
+              value={loanTenureYears}
+              onChange={(e) => setLoanTenureYears(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: 'var(--color-secondary)', marginTop: '6px' }}
+            />
+          </div>
+        </div>
+
+        {/* Capital Stack Cards Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>TOTAL PROJECT OUTLAY</span>
+            <div style={{ fontSize: '17px', color: '#fff', fontWeight: 'bold' }}>₹{totalProjectOutlay.toLocaleString()}</div>
+            <span style={{ fontSize: '9px', color: '#94a3b8' }}>Capex: ₹{setup.toLocaleString()} + 3mo Runway</span>
+          </div>
+
+          <div style={{ background: 'rgba(34, 197, 94, 0.05)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>OUT-OF-POCKET CASH (EQUITY)</span>
+            <div style={{ fontSize: '17px', color: '#22c55e', fontWeight: 'bold' }}>₹{promoterEquityAmount.toLocaleString()}</div>
+            <span style={{ fontSize: '9px', color: '#22c55e' }}>{promoterEquityPct}% of project outlay</span>
+          </div>
+
+          <div style={{ background: 'rgba(168, 85, 247, 0.05)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(168, 85, 247, 0.2)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>GOVERNMENT SUBSIDY</span>
+            <div style={{ fontSize: '17px', color: '#a855f7', fontWeight: 'bold' }}>₹{subsidyAmount.toLocaleString()}</div>
+            <span style={{ fontSize: '9px', color: '#a855f7' }}>{Math.round(subsidyRate * 100)}% Capital Grant</span>
+          </div>
+
+          <div style={{ background: 'rgba(59, 130, 246, 0.05)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>BANK TERM LOAN</span>
+            <div style={{ fontSize: '17px', color: '#3b82f6', fontWeight: 'bold' }}>₹{bankLoanAmount.toLocaleString()}</div>
+            <span style={{ fontSize: '9px', color: '#3b82f6' }}>Monthly EMI: ₹{monthlyEMI.toLocaleString()}</span>
+          </div>
+
+          <div style={{ background: 'rgba(234, 179, 8, 0.05)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>DSCR (DEBT SERVICE COVER)</span>
+            <div style={{ fontSize: '17px', color: dscrVal >= 1.5 ? '#22c55e' : '#eab308', fontWeight: 'bold' }}>{dscr}x</div>
+            <span style={{ fontSize: '9px', color: '#e2e8f0' }}>Net Profit Post-EMI: ₹{netProfitAfterEMI.toLocaleString()}</span>
+          </div>
         </div>
       </div>
 
